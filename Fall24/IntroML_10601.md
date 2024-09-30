@@ -27,6 +27,7 @@
   - Formula : $H(v) = -\sum_{v\in V(X)} P(X=v) log_2 (P(X=v))$ = $H(S) = -\sum_{v\in V(S)} \dfrac{\mid S_v\mid}{\mid S\mid} log_2 (\dfrac{\mid S_v\mid}{\mid S\mid})$
   - Entropy of all elements the same = 0
   - Entropy of elements splitting in half = 1
+  - Note that in ID3, the bound of entropy is [0, $\log_2 N$] with N as number of classifications in y.
   
 - Mutual Information / Information Gain
   - $I(Y;X) = H(Y) - H(Y\mid X) = H(y) - \sum_{v\in V(x_d)} f_v(H(Y_{x_d=v}))$
@@ -96,8 +97,8 @@
     - How to avoid overfitting:
       - Prune the tree 
         - Fixed depth
-        - Mutual information threshold
-        - Number of data in a node
+        - Higher Mutual information threshold
+        - Lower Number of data in a node (lower branching factor)
         - Evaluate with validation set. 
         - Greedly remove split that decreases validation error rate
   
@@ -111,11 +112,13 @@
   - Distance functions: 
     - Euclidean distance: $d(x, x')=\mid\mid x-x' \mid\mid _2 = \sqrt{\sum_{d=1}^{N}(x_d-x_d')^2}$
     - Manhattan distance: $d(x, x')=\mid\mid x-x' \mid\mid _1 = \sum_{d=1}^{N}\mid x_d-x_d'\mid$
-    - Hamming distance: $d(uv, v) = \sum_{i=1}^3 \sum_{j=1}^3 {1}(uv_{i,j} \neq vv_{i,j})$  = the number of pixels that differ between uv and vv
+    - Hamming distance: $d(uv, v) = \sum_{i=1}^3 \sum_{j=1}^3 \mathbb{1}(uv_{i,j} \neq vv_{i,j})$  = the number of pixels that differ between uv and vv
 - Train:
   - Basically no training, just remember k
   - The nearest neighbor of a point is always itself
   - KNN is an instance based / non-parametric method
+  - When k=1, the nearest neighbor of all points are themselves. Thus, 1-NN has training error = 0.
+  - When training, include the point itself. e.g. k=3 means to train with hte point itself and 2 other nearest points.
 - Predict:
   - Calculate the distance $d(u,v)$
   - Find the k nearest labels
@@ -125,6 +128,7 @@
   - Train: O(1)
   - Predict: O(MN), on average O($2^M \log N$) 
     - In practice, use stochastic approximations(fast and often as good)
+  - k-NN works well with smaller datasets but runtime struggles when dataset becomes large
 - Theoretical Guarantees:
   - error < 2 x Bayes Error Rate ('the best you can possibly do')
 - Ties for voting:
@@ -142,6 +146,7 @@
 - Overfitting
   - Increase k will decrease chances of overfitting, resulting in a smoother decision boundary, picking up less noise and outliers
   - We can also cross-validate to help pick k
+  - Increase number of training data will help decrease overfitting. 
 
 
 ### Model Selection 
@@ -166,7 +171,9 @@
     - Pro: 
       - Much faster (fewer iterations) to be in a relatively good range for good performance
       - Grid search may spend too much time on searching in the incorrect space.
-    - Con: Likelihood to select duplicated parameters. As more sets of parameters have been run on, the probability of duplication increases. 
+    - Con: 
+      - Likelihood to select duplicated parameters. As more sets of parameters have been run on, the probability of duplication increases. 
+      - Not gauranteed to find the best parameters.
   
 
 
@@ -181,31 +188,90 @@
     - $\cos \theta = \dfrac{a^T b}{\mid\mid a \mid\mid \times \mid\mid b \mid\mid }$
     - Length of Projection = $\mid\mid a \mid\mid \times \cos \theta $
     - Projection Vector direction aligns with b = Length of Projection $\times \dfrac{b}{\mid\mid b \mid\mid}$
-- Decision coundary: linear: {x: $w^Tx + b = 0$}
+- Decision boundary: linear: {x: $w^Tx + b = 0$}
 - Here we discuss binary classification denoted as {+1, -1}. Prediction : $\hat{y} = sign(\theta^T x + b)$
 - Online learning:
   - Data arrive in stream. Model is learned gradually
   - In contrast, batch learning has the entire dataset at the beginning
   - e.g. stock market, email, recommenders, ads
 - Perceptron online learning:
+    ```
+    intialize params
+    for all examples:
+        y_hat = sign(theta * x)
+        if y_hat != y:
+            theta = theta + y^i * x^i
+            b = b + y^i
+    ```
+    - Batch learning: repeats scan the whole dataset until converge
     ![perceptron](perceptron.png)
     - Size of w is same as size of each feature vector
 - Interpretations:
   - Parameter w is a linear combination of all feature vectors
   - Vector w is orthogonal to decision boundary, pointing to positive predictions
   - Intercept term b: increasing b pushes decision boundary down
+  - Only data that has been incorrectly predicted by perceptron is added to the parameters. This means that examples are not weighted equally
   - Perceptron Mistake Bound:
     ![perceptron mistake bound](perc_mistake.png)
     - Note this R is distance from origin! Not center of data points
     - R circle covers all data. To calculate R, get the farthest from origin 
-    - 
+    - <span style="color:red">TODO: Proof of Mistake Bound</span>
+  - If data is not linearly separable, perceptron will never converge.
+    - An extension would be project into higher dimensional space
+    - <span style="color:red">TODO: higher dimension perceptron</span>
+  - Perceptron may also overfit
 - Inductive Biases:
   - Newer data are more important than older data. Perceptron updates parameters as data arrives
   - Different order of data will give different models
-  - 
-### Linear Regression
 
+### Linear Regression
+- Regression:
+  - Decision tree regression: pick a splitting criteria (e.g. mse, mae)
+  - KNN regression: pick a voting method
+- Linear Functions
+  - Linear functions $\neq$ linear decision boundaries
+    - linear functions: $y=w^Tx+b$
+    - linear boundary: $sign(y=w^Tx+b)$
+- Key idea of linear regression: Find minimized square sum of residuals, which is a kind of optimization: Given $J(\theta)$ find $\hat{\theta} = argmin_{\theta\in\mathbb{R}^M}J(\theta)$
+- Optimization:
+  - ML optimization:
+    - Function may not be true goal
+    - Stopping early can help generalization error -> regularization
+    - Methods include: gradient descent, closed form, stochastic gradient descent...
+- Random guess
+  - Pick random $\theta$
+  - Evaluate J
+  - Repeat
+  - Pick $\theta$ with smallest J
 
 ### Gradient Descent
+- [Matrix Calculus](https://en.wikipedia.org/wiki/Matrix_calculus)
+  - Gradient: $\dfrac{\delta J(\theta)}{\delta\theta} = [\dfrac{dJ(\theta)}{d\theta_1}, \dfrac{dJ(\theta)}{d\theta_2},..., \dfrac{dJ(\theta)}{d\theta_M}]$
+- Algorithm
+  - choose initial $\theta$
+  - Repeat:
+    - compute gradient g
+    - select step size $\lambda\in\mathbb{R}$
+    - update $\theta = \theta - \lambda g$
+    - stop until reach stopping criteria (e.g. g $\approx$ 0, norm g < small number)
+  - return best $\theta$
+- Interpretation
+  - Wrong stepping size:
+    - Too big: might diverge 
+    - Too small: takes too many steps to stop
+    - We can always update $\lambda$ after each loop. Generally, we want a larger stepping size in the beginning and decrease as we approach the solution
+- Linear Regression + Gradient Descent
+    ![linear reg gradient](linreg_gd.png)
+- Algorithm
+  ```
+  theta = theta_0
+  while g > esp:
+    g = 1/N * np.sum((theta * xi - yi) * xi)
+    theta = theta - lambda * g
+  ```
+
+### Optimization
+
+
 
 ### Logistic Regression
