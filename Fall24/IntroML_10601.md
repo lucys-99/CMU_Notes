@@ -2,7 +2,7 @@
 ###### Lucy Sun MCDS Fall 2024
 ### Memorizers
 - Remember each data 
-- It is not a model. It is not generalization.
+- It is not a model. It is not generalizable.
 ### Majority Vote
 - Return prediction as the mode of training set. 
 - Worst training error = 50%
@@ -36,7 +36,7 @@
     | -------- | ------- |
     | 1  | 1    |
     | 1 | 0     |
-    | 0    | 0   |
+    | 0    | 1   |
     | 0    | 0   |
   - $I = 1 - ( \dfrac{2}{4} \times 0 + \dfrac{2}{4} \times 1 )  = 0$
 
@@ -247,6 +247,7 @@
 ### Gradient Descent
 - [Matrix Calculus](https://en.wikipedia.org/wiki/Matrix_calculus)
   - Gradient: $\dfrac{\delta J(\theta)}{\delta\theta} = [\dfrac{dJ(\theta)}{d\theta_1}, \dfrac{dJ(\theta)}{d\theta_2},..., \dfrac{dJ(\theta)}{d\theta_M}]$
+  - Gradient points to the fastest rise in the function
 - Algorithm
   - choose initial $\theta$
   - Repeat:
@@ -271,7 +272,124 @@
   ```
 
 ### Optimization
-
+- Convexity
+  - $f(cx^{(1)} + (1-c)x^{(2)}) \le cf(x^{(1)}) + (1-c) f(x^{(2)}) with  0\le c\le 1$
+  - Strictly Convex
+    - $f(cx^{(1)} + (1-c)x^{(2)}) < cf(x^{(1)}) + (1-c) f(x^{(2)}) with  0 < c < 1$
+  - Convex functions look like v
+  - Concave functions look like cave
+  - L2 Regularization is convex but not strictly convex
+  - Strictly convex functions have 0 or 1 minimizers
 
 
 ### Logistic Regression
+- Goal: to predict true or false with a [logistic function](https://medium.com/@karan.kamat1406/how-logistic-regression-works-the-sigmoid-function-and-maximum-likelihood-36cf7cec1f46#:~:text=The%20sigmoid%20function%20is%20more,logistic%20regression%20than%20other%20functions.) (ex. sigmoid, tanh)
+- Calculus baics
+  - For iid samples with probability mass distribution $p(X\mid\theta)$, likelihood functions is $L(\theta)=\Pi_{n=1}^N p(x^{(n)}\mid\theta)$
+  - The log likelihood is the log of L above: $l(\theta)=\log\Pi_{n=1}^N p(x^{(n)}\mid\theta) = \sum_{n=1}^N \log p(x^{(n)}\mid\theta)$
+- Maximum likelihood estimation
+  - This is the base of logistic regression. Logistic regression is trying to find the max likelihood fitting logistic funtion to the given training data
+  - Def: method to estimate the parameters of a distribution given some data
+  - First we need to assume an estimation of the dataset
+  - Then fit the data to the distribution, trying to find the best parameters
+  - We would like to make likelihood of samples maximized. Intuition is that we are assigning as much probability mass to observed data
+- [Exponential distribution](https://en.wikipedia.org/wiki/Exponential_distribution)
+   ![exp_dsitr](Exponential_distribution_pdf_-_public_domain.svg.png)
+  - pdf: $f(x\mid\lambda)=\lambda \exp^{-\lambda x}$
+  - ![exp mle](image.png)
+  - <span style="color:red">TODO: Type these formulas</span>
+- Assumptions
+  - y is binary labels - {True, False}
+  - $P(Y=1\mid x,\theta) = \sigma(\theta^Tx) = \dfrac{1}{1+exp(-\theta^Tx)} = \dfrac{exp(\theta^Tx)}{exp(\theta^Tx)+1}$
+- Implications
+  - $P(Y=0\mid x,\theta) = 1 - P(Y=1\mid x,\theta) \newline = 1 - \dfrac{exp(\theta^Tx)}{exp(\theta^Tx)+1} = \dfrac{1}{1+exp(\theta^Tx)}$
+  - $\dfrac{P(Y=1\mid x,\theta)}{P(Y=0\mid x,\theta)} = exp(\theta^Tx)$
+  - ![sigma](sigma.png)
+    - Maps $\theta^Tx$ to (0,1)
+    - differentiable everywhere
+    - Decision boundary is linear in x
+    - $\hat{y}$ = 1 if $P(Y=1\mid x,\theta) \ge 0.5$
+      - $\theta^Tx=0$ when $y=1$ 
+- [Bayesian logistic regression](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)
+- ![log_reg](log_reg.png)
+- To be consistent with ML conventions, we want to minimize negative conditional log-likelihood estimation
+- Derivation of loss function $l(\theta)$ and  objective function $J(\theta) = -\dfrac{1}{N}\sum_{i=1}^N y^{(i)}\log(P(Y=1\mid x^{(i)},\theta)) +(1-y^{(i)})\log(P(Y=0\mid x^{(i)},\theta))$
+  - Loss function is negative log likelihood of y's given x's
+ ![neg_log](neg_log_likelihood.png)
+- Gradient Calculations
+ ![log_reg_gradient](log_reg_gradient.png)
+- Gradient Descent
+  - Inputs: training dataset, step size $\gamma$
+  ```python
+  while termination criteria not satisfied 
+    randomly sample point from dataset
+    gradient = compute gradient 
+    theta = theta - gamma * gradient
+
+  return theta
+  ```
+
+### Stochastic Gradient Descent
+- In general, there are 3 types of gradient descent
+  - Batch GD: use entire dataset (batch) at each iteration
+    - $g=dJ(\theta) = \dfrac{1}{N}\sum_{i=1}^N(dJ^{(i)}(\theta))$
+  - Stochastic GD: Approximate gradient by gradient of one random sample
+    - $g=dJ(\theta) = dJ^{(i)}(\theta)$
+  - Mini-batch GD: Approximaet by random S samples
+    - $g=dJ(\theta) = \dfrac{1}{S}\sum_{i=1}^S(dJ^{(i)}(\theta))$
+    - higher S -> lower variance, higher memory usage
+- SGD is used for optimizing computational inefficiency of traditional GD
+- SGD uses a random single traing example to calculate gradient and update parameters
+ ![sgd](sgd.png)
+- epoch: single pass through the enture training dataset
+  - parameters are updated N times per epoch
+- Comparison
+    |method   | Steps to converge    | Computation per step | 
+    | -------- | ------- |------- |
+    | Gradient Descent|$O(log\dfrac{1}{\epsilon})$  | $O(ND)$    |
+    | SGD|$O(\dfrac{1}{\epsilon})$  | $O(D)$    |
+  - Empirically SGD reduces log likelihood much faster
+
+### Bayes Optimal Classifier
+- Naive Bayes assumption:
+  - $P(Y=y\mid X=x) = \dfrac{P(X=x\mid Y=y)P(Y=y)}{P(X=x)}$
+  - X features are independent from each other given y the labels
+- Bayes Classifier
+  - $h(x) = argmax_yP(y\mid x) = argmax_y\dfrac{P(x\mid y)P(y)}{z}$
+    - Which z is a constant normalizer
+  - $= argmax_y(P(y)\Pi_\alpha P(x_\alpha\mid y)) = argmax_y (logP(y) + \sum_\alpha P(x_\alpha\mid y))$
+- [Notes from Cornell](https://www.cs.cornell.edu/courses/cs4780/2021fa/lectures/lecturenote05.html)
+
+
+## Feature Engineering
+- NLP exmaple:
+- CV
+- Non-Linear features
+  - polynomial, sigmoid, radial basis function, log
+  - The more features added, the more likely to overfit
+
+
+### Regularization
+- Overfitting: recall that overfitting is the case that the model is too complicated that it fits training set perfectly but performs poorly on testing set
+- Regularization 
+  - A way to keep the model simply, balancing between model complexity and fitting
+  - Basically it's adding a penalty term of the model complexity to the training process
+  - Goal: find $\theta = argmin_\theta(J(\theta) + \lambda r(\theta))$
+    - with $J(\theta)$ as objective function
+    -  $\lambda r(\theta)$ a penalty term 
+  - Types:
+    |method   | $r(\theta)$    | notes | 
+    | -------- | ------- |------- |
+    | $l0$|$\mid\mid\theta\mid\mid_0 = \sum\mathbf{1}(\theta_m\ne0)$  | Count non-zero values in $\theta$ ; usually not used in practice since it is not differentiable  |
+    | $l1$ (Ridge) |$\mid\mid\theta\mid\mid_1 = \sum\mid\theta_m\mid$  | Subdifferentiable, absolute value of $\theta$ ;$\ell_1$ regularization prevents weights from going to infinity by reducing some of the weights to 0, effectively removing some of the features. |
+    | $l2$ (Lasso) |($\mid\mid\theta\mid\mid_2)^2 = \sum(\theta_m^2)$  | Differentiable, $\theta^T\theta$ ; $\ell_2$ regularization prevents weights from going to infinity by reducing the value of some of the weights to \textit{close} to 0 (reducing the effect of a feature but not necessarily removing it).   |
+
+  - Intercept term is not included in regularization
+    - learning algorithm needs to shift y values with this intercept term
+
+
+### Neural Networks
+
+
+### Backpropagation
+
