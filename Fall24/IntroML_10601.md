@@ -224,6 +224,8 @@
   - Newer data are more important than older data. Perceptron updates parameters as data arrives
   - Different order of data will give different models
 
+---- End of Exam 1 -------
+
 ### Linear Regression
 - Regression:
   - Decision tree regression: pick a splitting criteria (e.g. mse, mae)
@@ -284,13 +286,13 @@
 
 ### Logistic Regression
 - Goal: to predict true or false with a [logistic function](https://medium.com/@karan.kamat1406/how-logistic-regression-works-the-sigmoid-function-and-maximum-likelihood-36cf7cec1f46#:~:text=The%20sigmoid%20function%20is%20more,logistic%20regression%20than%20other%20functions.) (ex. sigmoid, tanh)
-- Calculus baics
+- Calculus basics
   - For iid samples with probability mass distribution $p(X\mid\theta)$, likelihood functions is $L(\theta)=\Pi_{n=1}^N p(x^{(n)}\mid\theta)$
   - The log likelihood is the log of L above: $l(\theta)=\log\Pi_{n=1}^N p(x^{(n)}\mid\theta) = \sum_{n=1}^N \log p(x^{(n)}\mid\theta)$
 - Maximum likelihood estimation
   - This is the base of logistic regression. Logistic regression is trying to find the max likelihood fitting logistic funtion to the given training data
   - Def: method to estimate the parameters of a distribution given some data
-  - First we need to assume an estimation of the dataset
+  - First we need to assume a distribution of the dataset
   - Then fit the data to the distribution, trying to find the best parameters
   - We would like to make likelihood of samples maximized. Intuition is that we are assigning as much probability mass to observed data
 - [Exponential distribution](https://en.wikipedia.org/wiki/Exponential_distribution)
@@ -350,6 +352,11 @@
     | SGD|$O(\dfrac{1}{\epsilon})$  | $O(D)$    |
   - Empirically SGD reduces log likelihood much faster
 
+- Closed Form optimization
+  - mean squared error ($J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2} (y^{(i)}-\theta^Tx^{(i)})^2$ $\frac{1}{2}$ is included here for computational convenience):
+    - gradient = $\hat{\Theta} = (X^TX)^{-1}X^Ty$
+    - When $X^TX$ is invertible, $\theta$ has single solution. When it is not invertible, there exists infinitely many solutions for $\theta$. 
+
 ### Bayes Optimal Classifier
 - Naive Bayes assumption:
   - $P(Y=y\mid X=x) = \dfrac{P(X=x\mid Y=y)P(Y=y)}{P(X=x)}$
@@ -361,12 +368,13 @@
 - [Notes from Cornell](https://www.cs.cornell.edu/courses/cs4780/2021fa/lectures/lecturenote05.html)
 
 
-## Feature Engineering
-- NLP exmaple:
-- CV
+### Feature Engineering
+<!-- - NLP exmaple:
+- CV -->
 - Non-Linear features
   - polynomial, sigmoid, radial basis function, log
   - The more features added, the more likely to overfit
+  - Require no changes to the model, it's just preprocessing
 
 
 ### Regularization
@@ -381,7 +389,7 @@
     |method   | $r(\theta)$    | notes | 
     | -------- | ------- |------- |
     | $l0$|$\mid\mid\theta\mid\mid_0 = \sum\mathbf{1}(\theta_m\ne0)$  | Count non-zero values in $\theta$ ; usually not used in practice since it is not differentiable  |
-    | $l1$ (Ridge) |$\mid\mid\theta\mid\mid_1 = \sum\mid\theta_m\mid$  | Subdifferentiable, absolute value of $\theta$ ;$\ell_1$ regularization prevents weights from going to infinity by reducing some of the weights to 0, effectively removing some of the features. |
+    | $l1$ (Ridge) |$\mid\mid\theta\mid\mid_1 = \sum\mid\theta_m\mid$  | Subdifferentiable, absolute value of $\theta$ ; $\ell_1$ regularization prevents weights from going to infinity by reducing some of the weights to 0, effectively removing some of the features. |
     | $l2$ (Lasso) |($\mid\mid\theta\mid\mid_2)^2 = \sum(\theta_m^2)$  | Differentiable, $\theta^T\theta$ ; $\ell_2$ regularization prevents weights from going to infinity by reducing the value of some of the weights to \textit{close} to 0 (reducing the effect of a feature but not necessarily removing it).   |
 
   - Intercept term is not included in regularization
@@ -389,7 +397,141 @@
 
 
 ### Neural Networks
-
-
+- Each set of neuron is a simple model. By connecting these neurons, it adds and and ors to the model, the model can be complex. 
+- Activation functions: (softmax is also an activation function)
+![activation](activation.png)
+- Algo
+  ```python
+  initialize weights and biases
+  while terminition criterion not satisfied:
+    for loop
+      compute gradient
+      update w = w - learning_rate * gradient
+  ```
+- Design decisions:
+  - no. hidden layers
+  - no. hidden units
+  - type of activation funtion
+  - form of objective function
+    - quadratic loss: $J = \frac{1}{2}(y-y^i)^2$ 
+      - $\frac{\partial J}{\partial y} = y- y^i$
+    - Binary cross entropy: $J=-(y^ilog(y)+(1-y^i)log(1-y))$
+      - $\frac{\partial J}{\partial y} = - (y^i\frac{1}{y}+(1-y^i)\frac{1}{y-1})$
+      - cross entropy has larger gradient with respect to weights.
+  - how to initialize parameters
+    - zero initial parameters: It is not reasonable to use zero initialization since a neural network with all neurons following the same path will have similar updates and hence the same weights. This also results in relatively limited model capacity and worse solution quality at convergence.
+- Softmax:
+  - $y_k = \frac{exp(b_k)}{\sum_{l=1}^k exp(b_l)}$
 ### Backpropagation
+- bias term is usually not included in the backpropogation: they are not affected by any other vectors
+- Convergence is based solely on training loss, not validation loss -- as the training loss decreases, the magnitude of the gradient updates decreases, causing the model to converge
+- Taking differentiation
+  - finite difference method:
+    - Approximate differentiation by measuring the difference for the function with small changes
+- Chain Rule:
+  <!-- ![chain rule](chain_rule.png)  -->
+  <img src="chain_rule.png"  width="200"/>
+  <img src="vector_deriv.png"  width="200"/>
+  <!-- ![vector derivatives](vector_deriv.png) -->
+- Derivative for sigmoid:
+  - $s = \frac{1}{1+exp(-b)}$
+  - $\frac{\partial s}{\partial b} = \frac{exp(-b)}{(exp(-b)+1)^2} = s(1-s)$
+![nn_derivative](nn_derivative.png)
+- Vanishing gradient:
+  - sigmoid gradient is the cause: it is product of small probabilities
+```python
+for epochs:
+  for datapoints in training data:
+    o = object(x, y, alpha, beta) # forward prop
+    g_a = gradient(J_a)
+    g_b = gradient(J_b) # backprop
+    # update parameters
+    alpha -= learning_rate * g_a
+    beta -= learning_rate * g_b
+  # mean cross entropy
+  J = J(alpha, beta)
+return alpha, beta
+```
+- Why use backprop? computations from forward prop can be reused
+  
+### ML Social Impact 
+- criterias to fit in human subjects
+  - fair/equatible w.r.t. demographic groups
+  - explainability/interpretability
+  - privacy preserving
+  - robustness to adversarial attack
+  - data/distribution shift
+  - transparency
+  - environmentally-friendly
+- Confusion matrix
+-  |   | Predicted positive    | Predicted negative | 
+    | -------- | ------- |------- |
+    | Actutal Positive |True Positive (TP)  | False Negative (FN)    |
+    | Actutal Negative | False Positive (FP) | True Negative (TN)    |
+- Asymmetric may be a problem with model only evaluated with accuracy
+- Other metrics:
+  - False Positive rate = $\frac{FP}{N} = \frac{FP}{FP+TN}$
+  - False negative rate = $\frac{FN}{P} = \frac{FN}{TP+FN}$
+  - Positive Predictive Value (Precision) = $\frac{TP}{PP} = \frac{TP}{TP+FP}$
+  - Negative Predictive Value (Recall) = $\frac{TN}{PN} = \frac{TN}{TN+FN}$
+- Fairness definitions
+  - Independece (Selection rate parity)
+    - Definition: $P(h(X,A) = +1|A=a_i) = P(h(X,A) = +1|A=a_j) \forall a_i, a_j$
+    -  Achieve fairness
+      - Preprocessing
+        - Preprocess the training data to be independent
+        - Massaging the dataset
+        - Reweighting the dataset (upweigh rare labels)
+      - Additional constaints
+        - regularization
+      - Post-processing
+    - But! permits laziness (flip a coin)
+  - Separation
+    - Definition: $P(h(X,A) = +1|Y=-1,A=a_i) = P(h(X,A) = +1|Y=-1,A=a_j) \forall a_i, a_j$ and $P(h(X,A) = -1|Y=+1,A=a_i)P(h(X,A) = -1|Y=+1,A=a_j) \forall a_i, a_j$
+    - ROC(receiver operating characteristic) curve: y-axis TPR, x-axis FPR 
+    - But! perpetuates existing biases in the training data, does not eliminate the bias
+  - Sufficiency (equality of FPR and FNR)
+    - Definition: 
+    - Most off-the-shelf ML models can achieve sufficiency without intervention
+  - Random classifier satisfies independence and separation but not sufficiency (????)
+
+
+
+### PAC - Probably Approximately Correct Learning
+- Notations:
+  - $c^*$: true function
+  - $h$: Hypothesis (possible model within a set of models, ex. linear regression with all parameters determined from training.)
+  - $\mathbb{H}$: set of hypothesis
+- Types of Risk
+  - Expected Risk (true error)
+  - Empirical Risk (training error)
+- Relationship between $c^*$ and $\mathbb{H}$
+  - Realizable and Agnostic
+    - Realizable: $c^*\in \mathbb{H}$
+  - Finite and Infinite:
+    - $|\mathbb{H}| < \infin$ 
+    - Finite: majority vote, decision tree
+    - Infinite: linear boundaries
+- True Error Bound
+  - Here we want to know the bound for true error rate when training error is 0. 
+  - Assumption: there are k bad hypothesis in $\mathbb{H}$
+  - Given a dataset with M data points, we want to know the probability of the bad hypothesis predicts all points correctly. 
+  - PAC learnable: $\exist \epsilon, \delta s.t. P(|R(h) - \hat{R}(h) | \le \epsilon) \ge 1-\delta \forall h\in H$
+
+- VC Bounds
+  - Shatter: First we can choose the shape/locations of the points to be separated by H. We need to test out all possible combinations of the labels and see if all of them can be separated with some h in H. 
+  - If a set of points that can always be classified correctly with some h in H, H can shatter these points. 
+  - VC dimension of H is the largest dimension that H can shatter. (There exists a dataset of k dimension that H can shatter. VC(H) = max(k))
+  - For linear separators: VC_dim(H) = dim(H) + 1
+![PAC](PAC_learning.png)
+
+
+- MLE find $\hat{\theta} = argmax_\theta p(D|\theta)$
+- MAP (Maximum a Posterior)
+  - Post/Prior? 
+    - In Bayensian probability theory, $p(x|\theta) = \frac{p(\theta|x)p(x)}{p(\theta)}$
+    - In this case, in terms of likelihood $p(x|\theta)$, the prior is $p(\theta)$, posterior is $p(\theta|x)$
+      - If the prior and posterior are in the same distribution family, they are the conjugate distributions with respect to the likelihood function.
+    - MAP finds $\hat{\theta} = argmax_\theta p(\theta|D) = argmax_\theta p(D|\theta)p(\theta)/p(D)= argmax_\theta p(D|\theta)p(\theta)= argmax_\theta log (p(D|\theta))+log(p(\theta))$
+- [Notes from Stanford](https://web.stanford.edu/class/archive/cs/cs109/cs109.1218/files/student_drive/7.5.pdf)
 
