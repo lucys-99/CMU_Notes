@@ -204,7 +204,7 @@
             b = b + y^i
     ```
     - Batch learning: repeats scan the whole dataset until converge
-    ![perceptron](perceptron.png)
+    ![perceptron](img/perceptron.png)
     - Size of w is same as size of each feature vector
 - Interpretations:
   - Parameter w is a linear combination of all feature vectors
@@ -212,7 +212,7 @@
   - Intercept term b: increasing b pushes decision boundary down
   - Only data that has been incorrectly predicted by perceptron is added to the parameters. This means that examples are not weighted equally
   - Perceptron Mistake Bound:
-    ![perceptron mistake bound](perc_mistake.png)
+    ![perceptron mistake bound](img/perc_mistake.png)
     - Note this R is distance from origin! Not center of data points
     - R circle covers all data. To calculate R, get the farthest from origin 
     - <span style="color:red">TODO: Proof of Mistake Bound</span>
@@ -264,7 +264,7 @@
     - Too small: takes too many steps to stop
     - We can always update $\lambda$ after each loop. Generally, we want a larger stepping size in the beginning and decrease as we approach the solution
 - Linear Regression + Gradient Descent
-    ![linear reg gradient](linreg_gd.png)
+    ![linear reg gradient](img/linreg_gd.png)
 - Algorithm
   ```
   theta = theta_0
@@ -296,9 +296,9 @@
   - Then fit the data to the distribution, trying to find the best parameters
   - We would like to make likelihood of samples maximized. Intuition is that we are assigning as much probability mass to observed data
 - [Exponential distribution](https://en.wikipedia.org/wiki/Exponential_distribution)
-   ![exp_dsitr](Exponential_distribution_pdf_-_public_domain.svg.png)
+   ![exp_dsitr](img/Exponential_distribution_pdf_-_public_domain.svg.png)
   - pdf: $f(x\mid\lambda)=\lambda \exp^{-\lambda x}$
-  - ![exp mle](image.png)
+  - ![exp mle](img/image.png)
   - <span style="color:red">TODO: Type these formulas</span>
 - Assumptions
   - y is binary labels - {True, False}
@@ -306,20 +306,20 @@
 - Implications
   - $P(Y=0\mid x,\theta) = 1 - P(Y=1\mid x,\theta) \newline = 1 - \dfrac{exp(\theta^Tx)}{exp(\theta^Tx)+1} = \dfrac{1}{1+exp(\theta^Tx)}$
   - $\dfrac{P(Y=1\mid x,\theta)}{P(Y=0\mid x,\theta)} = exp(\theta^Tx)$
-  - ![sigma](sigma.png)
+  - ![sigma](img/sigma.png)
     - Maps $\theta^Tx$ to (0,1)
     - differentiable everywhere
     - Decision boundary is linear in x
     - $\hat{y}$ = 1 if $P(Y=1\mid x,\theta) \ge 0.5$
       - $\theta^Tx=0$ when $y=1$ 
 - [Bayesian logistic regression](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)
-- ![log_reg](log_reg.png)
+- ![log_reg](img/log_reg.png)
 - To be consistent with ML conventions, we want to minimize negative conditional log-likelihood estimation
 - Derivation of loss function $l(\theta)$ and  objective function $J(\theta) = -\dfrac{1}{N}\sum_{i=1}^N y^{(i)}\log(P(Y=1\mid x^{(i)},\theta)) +(1-y^{(i)})\log(P(Y=0\mid x^{(i)},\theta))$
   - Loss function is negative log likelihood of y's given x's
- ![neg_log](neg_log_likelihood.png)
+ ![neg_log](img/neg_log_likelihood.png)
 - Gradient Calculations
- ![log_reg_gradient](log_reg_gradient.png)
+ ![log_reg_gradient](img/log_reg_gradient.png)
 - Gradient Descent
   - Inputs: training dataset, step size $\gamma$
   ```python
@@ -342,7 +342,7 @@
     - higher S -> lower variance, higher memory usage
 - SGD is used for optimizing computational inefficiency of traditional GD
 - SGD uses a random single traing example to calculate gradient and update parameters
- ![sgd](sgd.png)
+ ![sgd](img/sgd.png)
 - epoch: single pass through the enture training dataset
   - parameters are updated N times per epoch
 - Comparison
@@ -399,7 +399,7 @@
 ### Neural Networks
 - Each set of neuron is a simple model. By connecting these neurons, it adds and and ors to the model, the model can be complex. 
 - Activation functions: (softmax is also an activation function)
-![activation](activation.png)
+![activation](img/activation.png)
 - Algo
   ```python
   initialize weights and biases
@@ -430,13 +430,13 @@
     - Approximate differentiation by measuring the difference for the function with small changes
 - Chain Rule:
   <!-- ![chain rule](chain_rule.png)  -->
-  <img src="chain_rule.png"  width="200"/>
-  <img src="vector_deriv.png"  width="200"/>
+  <img src="img/chain_rule.png"  width="200"/>
+  <img src="img/vector_deriv.png"  width="200"/>
   <!-- ![vector derivatives](vector_deriv.png) -->
 - Derivative for sigmoid:
   - $s = \frac{1}{1+exp(-b)}$
   - $\frac{\partial s}{\partial b} = \frac{exp(-b)}{(exp(-b)+1)^2} = s(1-s)$
-![nn_derivative](nn_derivative.png)
+![nn_derivative](img/nn_derivative.png)
 - Vanishing gradient:
   - sigmoid gradient is the cause: it is product of small probabilities
 ```python
@@ -523,7 +523,7 @@ return alpha, beta
   - If a set of points that can always be classified correctly with some h in H, H can shatter these points. 
   - VC dimension of H is the largest dimension that H can shatter. (There exists a dataset of k dimension that H can shatter. VC(H) = max(k))
   - For linear separators: VC_dim(H) = dim(H) + 1
-![PAC](PAC_learning.png)
+![PAC](img/PAC_learning.png)
 
 
 - MLE find $\hat{\theta} = argmax_\theta p(D|\theta)$
