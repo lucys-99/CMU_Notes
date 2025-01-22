@@ -204,7 +204,7 @@
             b = b + y^i
     ```
     - Batch learning: repeats scan the whole dataset until converge
-    ![perceptron](img/perceptron.png)
+    ![perceptron](introML_img/perceptron.png)
     - Size of w is same as size of each feature vector
 - Interpretations:
   - Parameter w is a linear combination of all feature vectors
@@ -212,7 +212,7 @@
   - Intercept term b: increasing b pushes decision boundary down
   - Only data that has been incorrectly predicted by perceptron is added to the parameters. This means that examples are not weighted equally
   - Perceptron Mistake Bound:
-    ![perceptron mistake bound](img/perc_mistake.png)
+    ![perceptron mistake bound](introML_img/perc_mistake.png)
     - Note this R is distance from origin! Not center of data points
     - R circle covers all data. To calculate R, get the farthest from origin 
     - <span style="color:red">TODO: Proof of Mistake Bound</span>
@@ -264,7 +264,7 @@
     - Too small: takes too many steps to stop
     - We can always update $\lambda$ after each loop. Generally, we want a larger stepping size in the beginning and decrease as we approach the solution
 - Linear Regression + Gradient Descent
-    ![linear reg gradient](img/linreg_gd.png)
+    ![linear reg gradient](introML_img/linreg_gd.png)
 - Algorithm
   ```
   theta = theta_0
@@ -296,9 +296,9 @@
   - Then fit the data to the distribution, trying to find the best parameters
   - We would like to make likelihood of samples maximized. Intuition is that we are assigning as much probability mass to observed data
 - [Exponential distribution](https://en.wikipedia.org/wiki/Exponential_distribution)
-   ![exp_dsitr](img/Exponential_distribution_pdf_-_public_domain.svg.png)
+   ![exp_dsitr](introML_img/Exponential_distribution_pdf_-_public_domain.svg.png)
   - pdf: $f(x\mid\lambda)=\lambda \exp^{-\lambda x}$
-  - ![exp mle](img/image.png)
+  - ![exp mle](introML_img/exp_MLE.png)
   - <span style="color:red">TODO: Type these formulas</span>
 - Assumptions
   - y is binary labels - {True, False}
@@ -306,20 +306,20 @@
 - Implications
   - $P(Y=0\mid x,\theta) = 1 - P(Y=1\mid x,\theta) \newline = 1 - \dfrac{exp(\theta^Tx)}{exp(\theta^Tx)+1} = \dfrac{1}{1+exp(\theta^Tx)}$
   - $\dfrac{P(Y=1\mid x,\theta)}{P(Y=0\mid x,\theta)} = exp(\theta^Tx)$
-  - ![sigma](img/sigma.png)
+  - ![sigma](introML_img/sigma.png)
     - Maps $\theta^Tx$ to (0,1)
     - differentiable everywhere
     - Decision boundary is linear in x
     - $\hat{y}$ = 1 if $P(Y=1\mid x,\theta) \ge 0.5$
       - $\theta^Tx=0$ when $y=1$ 
 - [Bayesian logistic regression](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)
-- ![log_reg](img/log_reg.png)
+- ![log_reg](introML_img/log_reg.png)
 - To be consistent with ML conventions, we want to minimize negative conditional log-likelihood estimation
 - Derivation of loss function $l(\theta)$ and  objective function $J(\theta) = -\dfrac{1}{N}\sum_{i=1}^N y^{(i)}\log(P(Y=1\mid x^{(i)},\theta)) +(1-y^{(i)})\log(P(Y=0\mid x^{(i)},\theta))$
   - Loss function is negative log likelihood of y's given x's
- ![neg_log](img/neg_log_likelihood.png)
+ ![neg_log](introML_img/neg_log_likelihood.png)
 - Gradient Calculations
- ![log_reg_gradient](img/log_reg_gradient.png)
+ ![log_reg_gradient](introML_img/log_reg_gradient.png)
 - Gradient Descent
   - Inputs: training dataset, step size $\gamma$
   ```python
@@ -342,7 +342,7 @@
     - higher S -> lower variance, higher memory usage
 - SGD is used for optimizing computational inefficiency of traditional GD
 - SGD uses a random single traing example to calculate gradient and update parameters
- ![sgd](img/sgd.png)
+ ![sgd](introML_img/sgd.png)
 - epoch: single pass through the enture training dataset
   - parameters are updated N times per epoch
 - Comparison
@@ -369,8 +369,6 @@
 
 
 ### Feature Engineering
-<!-- - NLP exmaple:
-- CV -->
 - Non-Linear features
   - polynomial, sigmoid, radial basis function, log
   - The more features added, the more likely to overfit
@@ -399,7 +397,7 @@
 ### Neural Networks
 - Each set of neuron is a simple model. By connecting these neurons, it adds and and ors to the model, the model can be complex. 
 - Activation functions: (softmax is also an activation function)
-![activation](img/activation.png)
+![activation](introML_img/activation.png)
 - Algo
   ```python
   initialize weights and biases
@@ -429,14 +427,14 @@
   - finite difference method:
     - Approximate differentiation by measuring the difference for the function with small changes
 - Chain Rule:
-  <!-- ![chain rule](chain_rule.png)  -->
-  <img src="img/chain_rule.png"  width="200"/>
-  <img src="img/vector_deriv.png"  width="200"/>
-  <!-- ![vector derivatives](vector_deriv.png) -->
+  =![chain rule](chain_rule.png)
+  <img src="introML_img/chain_rule.png"  width="200"/>
+  <img src="introML_img/vector_deriv.png"  width="200"/>
+  ![vector derivatives](vector_deriv.png) 
 - Derivative for sigmoid:
   - $s = \frac{1}{1+exp(-b)}$
   - $\frac{\partial s}{\partial b} = \frac{exp(-b)}{(exp(-b)+1)^2} = s(1-s)$
-![nn_derivative](img/nn_derivative.png)
+![nn_derivative](introML_img/nn_derivative.png)
 - Vanishing gradient:
   - sigmoid gradient is the cause: it is product of small probabilities
 ```python
@@ -523,7 +521,7 @@ return alpha, beta
   - If a set of points that can always be classified correctly with some h in H, H can shatter these points. 
   - VC dimension of H is the largest dimension that H can shatter. (There exists a dataset of k dimension that H can shatter. VC(H) = max(k))
   - For linear separators: VC_dim(H) = dim(H) + 1
-![PAC](img/PAC_learning.png)
+![PAC](introML_img/PAC_learning.png)
 
 
 - MLE find $\hat{\theta} = argmax_\theta p(D|\theta)$
@@ -535,3 +533,151 @@ return alpha, beta
     - MAP finds $\hat{\theta} = argmax_\theta p(\theta|D) = argmax_\theta p(D|\theta)p(\theta)/p(D)= argmax_\theta p(D|\theta)p(\theta)= argmax_\theta log (p(D|\theta))+log(p(\theta))$
 - [Notes from Stanford](https://web.stanford.edu/class/archive/cs/cs109/cs109.1218/files/student_drive/7.5.pdf)
 
+
+
+
+---- End of Exam 2 -------
+
+### CNN
+- Filters/kernels: small matrix that convolved with same-sized sections of the image matrix
+- identity, edge detection, blur, sharpen 
+- padding: ensure border features captured
+- pooling: downsampling
+  - max-pooling
+- pytorch output_size = (input_size - kernel_size + 2 * padding) / stride + 1
+### RNN
+- vanishing gradient: backprop through the layers makes gradient really small
+### RNN-LM
+- n-gram models
+  - generate realistic looking sentences in a human language
+  - condition on the last n-1 words to sample the nth word
+  - $\Pi_{t=1}^{T} p(w_t|w_{t-1})$
+  - count n-gram frequencies to get the probabilities
+<!-- ![RNN_LM](introML_img/RNN_LM.png) -->
+- <img src="introML_img/RNN_LM.png"  width="400"/>
+  
+  - Key ideas
+    - convert all previous words to fixed length vector
+    - definr distribution $p(w_t|f_{\theta}(w_{t-1}, ..., w_1))$ conditioning on vector $h_t=f_{\theta}(w_{t-1}, ..., w_1)$
+  - Learning RNN
+    - part of speech tagging
+<!-- - ![RNN_LM_algo](introML_img/Elman_RNN.png) -->
+- <img src="introML_img/Elman_RNN.png"  width="400"/> <img src="introML_img/RNN_LM_loss.png"  width="400"/> <img src="introML_img/attention.png"  width="400"/>
+
+<!-- - ![RNN_LM_loss](introML_img/RNN_LM_loss.png) -->
+
+<!-- - Attention -->
+<!-- - ![Attention](introML_img/attention.png) -->
+
+  - multiheaded attention: like multiple channels in convolution layer 
+  - It allows a model to simultaneously focus on different aspects of an input sequence
+  - Concatenate all outputs to get a single vector fr each time step
+- Transformer LM
+  - RNN computation graph grows linearly with number of input tokens; Transformer grows quadratically
+  - Each layer consists of attention, feed-forward nn, layer normalization, residual connecton
+  - layer normalization: 
+<!-- - ![layer normalization](introML_img/tf_norm.png) -->
+<img src="introML_img/tf_norm.png"  width="400"/>
+
+### AudoDiff
+
+### Pre-training, Fine-tuning
+- fix the just trained weights for later layers; use pre-trained weights as initialization
+- supervised pre-training: measure error
+- unsupervised: reconstruction error - autoencoder
+- Overfitting  - not enough labeling, data -> use related pre-trained model
+- not enought labelled data to fine-tune? -> in-context learning, pass a few examples to the model as input w/o performing updates 
+  - few-shot, one-shot, zero-shot (in context)
+- RLHF
+### Reinforcement Learning
+- Formulation: state space, action space, reward function (stochastic, deterministic), transition function, policy($\pi$ specifies an action to take in every state), value function($V^{\pi}: S\rightarrow R$ expected total payoff of starting in state s executing policy $\pi$)
+<!-- ![RL terminology](introML_img/RL_term.png) -->
+<img src="introML_img/RL_term.png"  width="400"/>
+- MDP
+  - objective function: total reward $E[\sum_{t=0}^{\infin}\gamma^t r_t]$: infinite horizon expected future discounted reward
+- Bellman's Equation
+- Fixed Point Iteration
+  - system of equations; rewrite with each variable on the LHS; update each parameter until converge
+
+- Value iterations 
+<!-- ![RL value](introML_img/RL_value_iter.png)
+![RL value iter variant3](introML_img/RL_val_iter2.png)
+![RL value iter variant1](introML_img/RL_val_v1.png)
+![RL value iter variant2](introML_img/RL_val_v2.png)
+![RL value iteration sync and async](introML_img/RL_sync_async.png)
+![RL value iteration sync and async](introML_img/RL_conv.png)
+ -->
+
+<img src="introML_img/RL_value_iter.png"  width="400"/><img src="introML_img/RL_val_iter2.png"  width="400"/><img src="introML_img/RL_val_v1.png"  width="400"/><img src="introML_img/RL_val_v2.png"  width="400"/><img src="introML_img/RL_sync_async.png"  width="400"/><img src="introML_img/RL_conv.png"  width="400"/>
+
+- Policy Iterations
+  - stochastic rewards: deterministic rewrds depending on the next state (transitions are stochastic)
+![RL Policy Iter](introML_img/RL_policy_iter.png)
+  - value iteration: $O(|S|^2|A|)$/iter
+  - policy iteration: $O(|S|^2|A|+|S|^3)$/iter empirically requires fewer iterations
+- Q-learning
+  - problem: reward and transition funcs are unkonwn
+    - online learning (Q-table)
+    - $\epsilon$ online learning: with probability $1-\epsilon$ take random action; otherwise take greedy action: Temporal difference
+![RL epsilon](introML_img/RL_epsilon.png)
+    -  converge to optimal if every valid state-action pair is visited infinitely often; finite rewards; initial Q values are finite; learning rate follows some schedule
+  - problem: infinite state/action spaces
+    - Deep RL
+neural network: represent states with some feature vector; stochastic gradient descent (consider one state-action pair in each iteration): fundamentally connected to regression, uses nn to predict Q-value 
+![Deep RL](introML_img/RL_nn.png)
+- Experience replay: replay buffer; uniformly draw from the buffer for update
+
+### Recommender Systems
+- content filtering: need external information; easy to add new items
+- Collaboorative filtering: no sode information, not work on new items with no ratings 
+  - neighborhood methods: kmeans
+  - latent factor methods: matrix factorization (U: user factors, V: item factors)
+    - uncontrained matrix factorization: use only observed data; alternating least squares
+![MF](introML_img/MF.png)
+    - SVD:  If R fully
+observed and no
+regularization, the
+optimal UVT from
+SVD equals the
+optimal UVT from
+Unconstrained MF
+    - NMF
+
+### PCA
+- Centering/whitening the data to 0 mean
+- Projection: $z = (\frac{v^Tx}{||v||_2})\frac{v}{||v||_2}$
+- $\hat{v}=argmin_{v:||v||_2^2=1}\sum_{n=1}^N||x^{(n)}- (v^Tx^{(n)})v||_2^2=argmin_{v:||v||_2^2=1}v^T(X^TX)v$
+- eigenvectors and eigenvalues $Av=\lambda v$; eigevectors of symmetricmatrices are orthogonal
+- unique variance on each component
+- SVD: $X=USV^T$ U cols and V cols are eigenvectors
+- variance for ith PC: $\frac{\lambda_i}{\sum\lambda_i}$
+- shortcomings: linear relationships, outliers, interpretability, information loss
+- autoencoders: nn implicitly learn low-dimensional representations
+
+
+### Ensemble Methods
+- Weighted Majority algo: only learns weight for classifiers
+![Weighted Majority algo](introML_img/ensemble_wma.png)
+  - Upper bounds on number of mistakes in a given sequence of trials: 
+    - $O(log|A|+m)$ if one algo of A (pool) makes at most m mistakes
+    - $O(log(|A|/k)+m)$ subpooll of k algos
+    - $O(log(|A|/k)+m/k)$ total number of mistakes of subpool of k algos of A is at most m
+- AdaBoost: learn weak learners and weights for each learner
+![Adaboost algo](introML_img/adaboost.png)
+  - mistake bounds: if each weak hypothesis is slightly better than random so that $\gamma_t\ge\gamma$ for some $\gamma>0$ then training error drops exponentially fast
+  - generalization error: $Pr[H(x)\ne y]+O(\sqrt{\frac{Td}{N}})$ : d is VC dim of weak learner, T is boosting rounds, N is sample size; however, empirical results show adaboost does not tend to overfit
+- Bagging: bootstrap aggregation
+  - sample bagging: repeated sample with replacement
+  - feature bagging: repeatedly sample w replacement subset of features
+  - random forest: draw sample of training examples; learn DT; each node randomly sample subset features before splitting
+  - OOB: error of a sample that are not used in training for some trees; can be used for hyperparameter optimization
+  - Feature importance: add the information gain for feature when selected
+  - Upper bound of generalization can be derived from accuracy of each individual classifier and dependence between them
+### Clustering (K-Means)
+- objective: $argmin_C\sum_{i=1}^N min_j||x^{(i)}-c_j||_2^2$
+- Repeat: pick each cluster assignment to minimize distance; pick each cluster center to minimize distance (block coordinate descent)
+- Initialization: 
+  - random centers: works well when data from well-separated gaussians; may get stuck in local optima; can be arbitrarily bad; Pr[each initial cetner is in a diff Gaussian] $\approx \frac{1}{e^k}$: unlikely when k is large
+  - furthest point heuristic: pick first cluster enter randomly, then pick each subsequent center farthest possible from previous centers; outliers as problem
+  - k-Means++(Lloyd’s Method): Pick center proportional to $D^2(x)$: weighted probability distribution; in expectation O(log k) to optimal solution
+- improve performance: choose k: elbo of curve; random restarts; 

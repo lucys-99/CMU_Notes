@@ -1,0 +1,91 @@
+
+DATA STRUCTURE PRIMER
+https://d2xvti2irp4c7t.cloudfront.net/media/83/834F18172E10731476F1DDBBD8C01183/data_structures.html
+
+NUMPY
+
+https://d2xvti2irp4c7t.cloudfront.net/media/3C/3CDFA1E88F58AE9669DED224EB668693/numpy_primer.html
+
+PANDAS
+
+https://d2xvti2irp4c7t.cloudfront.net/media/8E/8E583A9E12D7C9709760DAA03A5EB629/pandas_primer.html
+
+
+LINEAR ALGEBRA
+
+https://d2xvti2irp4c7t.cloudfront.net/media/10/10dd782f351b1c10a6359246ca8a13d3/linear_algebra_numpy_primer.html
+
+
+
+VECTORIZATION
+
+https://d2xvti2irp4c7t.cloudfront.net/media/aa/aa12b7fa47b362efe19145d2539dde67/vectorization_recitation.html
+
+
+RECOMMENDER Systems
+https://d2xvti2irp4c7t.cloudfront.net/media/db/dbafe3e883401509a1907fd29b1a8496/recommender_system_primer.html
+
+
+
+
+DATA Visualization
+https://d2xvti2irp4c7t.cloudfront.net/media/af/af652aeae1befaa37c1bc0ad98cac7d3/data_visualization_primer.html
+
+
+
+
+Matplotlib
+https://d2xvti2irp4c7t.cloudfront.net/media/4e/4e713905eb2b17e3ec5616760c59e8d1/matplotlib_seaborn_primer.html
+
+
+
+
+Altair
+https://d2xvti2irp4c7t.cloudfront.net/media/3C/3CF8C12D79AB4A51CA13455852F08A93/Altair%20heatmap%20and%20long%20form%20data%20transformation%203.html
+
+Text
+https://d2xvti2irp4c7t.cloudfront.net/media/bf/bf86efcecdcfba79732dfc264629acf8/text_data_processing_primer.html
+
+
+Data Collection
+https://d2xvti2irp4c7t.cloudfront.net/media/18/18928d8963ff1554fec9f8b1b6172753/data_collection_extraction_primer.html
+
+
+Sklearn and NLP
+https://d2xvti2irp4c7t.cloudfront.net/media/71/7171b4692c780b9330a122d6ed1ceedb/sklearn_nlp_primer.html
+
+
+
+
+ML
+https://d2xvti2irp4c7t.cloudfront.net/media/dc/dcf5fdb26b1e261983202121be6884d0/machine_learning_primer.html
+
+
+
+PyTorch
+https://d2xvti2irp4c7t.cloudfront.net/media/f7/f7b957d671f312f09bef4ac280e9c475/pytorch_primer.html
+
+
+deep learning
+https://d2xvti2irp4c7t.cloudfront.net/media/3f/3fd420c65fb438df0c91f8d7e606384f/dl_cv_primer.html
+
+
+Azure
+https://d2xvti2irp4c7t.cloudfront.net/media/ec/ec3c74f0f7dd2b14d2a4f2854c03eedf/azure_model_deployment_primer.html
+
+TQDM
+https://d2xvti2irp4c7t.cloudfront.net/media/ab/aba82899da7eea87f4282a7c59b8a95c/tqdm_primer.html
+
+Hugging Face
+https://d2xvti2irp4c7t.cloudfront.net/media/d9/d992a3307ed40f553eddf6c717ef4051/huggingface_primer.html
+
+
+BERT
+https://d2xvti2irp4c7t.cloudfront.net/media/a7/a715dc6639cf0f4489af5584f8a68037/rnn_primer.html
+
+RNN
+https://d2xvti2irp4c7t.cloudfront.net/media/a7/a715dc6639cf0f4489af5584f8a68037/rnn_primer.html
+
+Syntax Tree
+https://d2xvti2irp4c7t.cloudfront.net/media/07/07296e3d9c2b7c621ca3027ee003a42a/ast_primer.html
+

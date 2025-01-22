@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>Lucy Sun MCDS Fall 2024</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex/dist/katex.min.css">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <!-- ## CMU 10601 Lecture Notes
+###### Lucy Sun MCDS Fall 2024
+### Memorizers
+- Remember each data 
+- It is not a model. It is not generalizable.
+### Majority Vote
+- Return prediction as the mode of training set. 
+- Worst training error = 50%
+- Problem: It only takes in label to make predictinos and not take any feature into account
+
+### Decision Tree
+#### Data Structure
+- Tree is a type of graph that expands from root to leaf. It is important to identify leaf nodes when building and traversing the tree. Conditions depend on the structure of node but genrallly check 
+  ```
+  if node.left == None and node.right == None:
+    This node is a leaf node
+  ```
+- Binary search tree
+  - Each node has only 2 child nodes. 
+  - It can be balanced or not balanced
+  - Balanced tree are most efficient for searching[O(logn)]
+#### When to split: 
+- Error :
+  - Based on the error rate this feature produces when splitting by majority vote. 
+  - err = count(wrong pred by this feature) / count(all data in this node)$
+- Entropy: 
+  - Formula : $H(v) = -\sum_{v\in V(X)} P(X=v) log_2 (P(X=v))$ = $H(S) = -\sum_{v\in V(S)} \dfrac{\mid S_v\mid}{\mid S\mid} log_2 (\dfrac{\mid S_v\mid}{\mid S\mid})$
+  - Entropy of all elements the same = 0
+  - Entropy of elements splitting in half = 1
+  - Note that in ID3, the bound of entropy is [0, $\log_2 N$] with N as number of classifications in y.
+  
+- Mutual Information / Information Gain
+  - $I(Y;X) = H(Y) - H(Y\mid X) = H(y) - \sum_{v\in V(x_d)} f_v(H(Y_{x_d=v}))$
+  
+    | x    | y |
+    | -------- | ------- |
+    | 1  | 1    |
+    | 1 | 0     |
+    | 0    | 1   |
+    | 0    | 0   |
+  - $I = 1 - ( \dfrac{2}{4} \times 0 + \dfrac{2}{4} \times 1 )  = 0$
+
+
+#### Construction
+- Typical node structure:
+    ```python
+    class Node:
+    '''
+    Here is an arbitrary Node class that will form the basis of your decision
+    tree. 
+    Note:
+        - the attributes provided are not exhaustive: you may add and remove
+        attributes as needed, and you may allow the Node to take in initial
+        arguments as well
+        - you may add any methods to the Node class if desired 
+    '''
+    def __init__(self):
+        self.left = None # left node
+        self.right = None # right node
+        self.attr = None # attribute to split on
+        self.vote = None # which label this node predicts
+        self.stats:dict = {} # distribution of labels
+        self.entropy = -1 # entropy, initialized as -1
+        self.depth = None # keep track of depth
+    ```
+- Typical tree functions:
+  ```python
+  def calc_entropy(self, y) # calculate the entropy for subsets
+  def calc_mutual_info(self, x, y) # calculate mutual information/ information gain
+  def split_attr(self, x, y) # calculate mutual information for each feature and decide which attribute to split on
+  def split(self, train_x, train_y, depth) # recursive function for training
+  def train(self) # calls split function add feed in training data
+  def evaluate(self, mode) # make predictions with built tree
+  ```
+
+- Helper functions:
+  ```python
+  def print_tree(node:Node, result:str, attr:str, vote:int) # prints struture of the tree recursively
+  ```
+- Basic idea of recursion in building or traversing tree:
+  - Base case: hits leafnode. 
+    - For building the tree, it means that the dataset is pure enough that cannot be splited by available features.
+    - For traversing the tree, it means we have reach the leaf node. 
+  - Call function to the left 
+  - Call function to the right
+  
+- Pros:
+  - Interpretable (Some paper use DT to analyse their results)
+  - Efficient
+  - Compatible with categorical features 
+- Cons:
+  - Greedy learning: every split is the best split at the time but not overall. Therefore, it does not guarantee to find the smallest tree. The model usually 
+  - Overfit 
+    - Model fits training data set too tight that it cannot generalize
+    - When splitting on numeric values, it can split on infinite values, which may cause overfitting.
+    ![overfit](overfit.jpg)
+    - How to avoid overfitting:
+      - Prune the tree 
+        - Fixed depth
+        - Higher Mutual information threshold
+        - Lower Number of data in a node (lower branching factor)
+        - Evaluate with validation set. 
+        - Greedly remove split that decreases validation error rate
+  
+  - [Inductive bias](https://www.baeldung.com/cs/ml-inductive-bias) (We always make assumptions when building model): There are many inductive bias in DT: 
+      - Shorter tres are always better
+      - Majority vote classifier
+  
+### KNN
+- Classify points closer to each other as the same label
+- What is close?
+  - Distance functions: 
+    - Euclidean distance: $d(x, x')=\mid\mid x-x' \mid\mid _2 = \sqrt{\sum_{d=1}^{N}(x_d-x_d')^2}$
+    - Manhattan distance: $d(x, x')=\mid\mid x-x' \mid\mid _1 = \sum_{d=1}^{N}\mid x_d-x_d'\mid$
+    - Hamming distance: $d(uv, v) = \sum_{i=1}^3 \sum_{j=1}^3 \mathbb{1}(uv_{i,j} \neq vv_{i,j})$  = the number of pixels that differ between uv and vv
+- Train:
+  - Basically no training, just remember k
+  - The nearest neighbor of a point is always itself
+  - KNN is an instance based / non-parametric method
+  - When k=1, the nearest neighbor of all points are themselves. Thus, 1-NN has training error = 0.
+  - When training, include the point itself. e.g. k=3 means to train with hte point itself and 2 other nearest points.
+- Predict:
+  - Calculate the distance $d(u,v)$
+  - Find the k nearest labels
+  - Perform (weighted) majority vote
+  - Decision Boundary is nonlinear
+- Time:
+  - Train: O(1)
+  - Predict: O(MN), on average O($2^M \log N$) 
+    - In practice, use stochastic approximations(fast and often as good)
+  - k-NN works well with smaller datasets but runtime struggles when dataset becomes large
+- Theoretical Guarantees:
+  - error < 2 x Bayes Error Rate ('the best you can possibly do')
+- Ties for voting:
+  - Drop k to odd number
+  - Distance weighted - closer points have larger weights
+  - Select randomly
+  - Get closest
+  - Another distance metric
+  - Remove farthest
+  - Note: when distance of points are equal, it can also create a tie
+- Inductive Bias
+  - Scale of features will impact value of distance a lot (e.g. cm vs m)
+  - All features are equally important
+  - Choice of distance matters a lot
+- Overfitting
+  - Increase k will decrease chances of overfitting, resulting in a smoother decision boundary, picking up less noise and outliers
+  - We can also cross-validate to help pick k
+  - Increase number of training data will help decrease overfitting. 
+
+
+### Model Selection 
+- Hyperparameter: tunable aspects of the model. It is differnt than model parameter which are decided by the model itself. Instead, hyperparameters restrict the domain of the model.
+  - E.g. Max-depth of decision tree, splitting threshold, k for KNN
+- Model: hypothesis space over which learning performs search
+- Learning algorithm: data-driven search over hypothesis space
+- We need a function capable of measuring the quality of a model- Validation: 
+  - Hold out a set of training to perform prediction on. 
+  - We choose the lowest validation error
+  - Validation needs to be performed on unseen data
+  - Cross validation: instad of use only part of training data. We use folds of data. 
+    - Splitting training set into multiple folds. Pick each fold as validation, train on the rest of training data, then repeat until we have exhausted the data
+    - Pro: Error is more stable
+    - Con: slower computation
+- Hyperparameter optimization
+  - Grid search: search through all values in the input space
+    - Pro: 
+      - All combinations are exhausted. 
+      - Guarnateed best set of hyperparameters if discrete sets of parameters 
+  - Random Search: Pick a range of values for each parameter. Select each parameter randomly with some assumed distribution
+    - Pro: 
+      - Much faster (fewer iterations) to be in a relatively good range for good performance
+      - Grid search may spend too much time on searching in the incorrect space.
+    - Con: 
+      - Likelihood to select duplicated parameters. As more sets of parameters have been run on, the probability of duplication increases. 
+      - Not gauranteed to find the best parameters.
+  
+
+
+### Perceptron
+- Linear classification models (Perceptron, logistic regression, naive bayes, support vector machine)
+- Background Math
+  - To illustrate $w_1x_1+w_2x_2+b>0$ geometrically, we can derive $x_2$ with w, $x_1$ and b
+  - L2 norm = $\mid\mid a \mid\mid _2 = \sqrt{a^T a}$
+  - Orthogonal matrices $a \dot b = 0$
+  - Vector projection a onto b: $\dfrac{a^{T} b}{\mid\mid b \mid\mid _2}b$ 
+    - Denote $\theta$ as angle between a and b. 
+    - $\cos \theta = \dfrac{a^T b}{\mid\mid a \mid\mid \times \mid\mid b \mid\mid }$
+    - Length of Projection = $\mid\mid a \mid\mid \times \cos \theta $
+    - Projection Vector direction aligns with b = Length of Projection $\times \dfrac{b}{\mid\mid b \mid\mid}$
+- Decision boundary: linear: {x: $w^Tx + b = 0$}
+- Here we discuss binary classification denoted as {+1, -1}. Prediction : $\hat{y} = sign(\theta^T x + b)$
+- Online learning:
+  - Data arrive in stream. Model is learned gradually
+  - In contrast, batch learning has the entire dataset at the beginning
+  - e.g. stock market, email, recommenders, ads
+- Perceptron online learning:
+    ```
+    intialize params
+    for all examples:
+        y_hat = sign(theta * x)
+        if y_hat != y:
+            theta = theta + y^i * x^i
+            b = b + y^i
+    ```
+    - Batch learning: repeats scan the whole dataset until converge
+    ![perceptron](introML_img/perceptron.png)
+    - Size of w is same as size of each feature vector
+- Interpretations:
+  - Parameter w is a linear combination of all feature vectors
+  - Vector w is orthogonal to decision boundary, pointing to positive predictions
+  - Intercept term b: increasing b pushes decision boundary down
+  - Only data that has been incorrectly predicted by perceptron is added to the parameters. This means that examples are not weighted equally
+  - Perceptron Mistake Bound:
+    ![perceptron mistake bound](introML_img/perc_mistake.png)
+    - Note this R is distance from origin! Not center of data points
+    - R circle covers all data. To calculate R, get the farthest from origin 
+    - <span style="color:red">TODO: Proof of Mistake Bound</span>
+  - If data is not linearly separable, perceptron will never converge.
+    - An extension would be project into higher dimensional space
+    - <span style="color:red">TODO: higher dimension perceptron</span>
+  - Perceptron may also overfit
+- Inductive Biases:
+  - Newer data are more important than older data. Perceptron updates parameters as data arrives
+  - Different order of data will give different models
+
+---- End of Exam 1 -------
+
+### Linear Regression
+- Regression:
+  - Decision tree regression: pick a splitting criteria (e.g. mse, mae)
+  - KNN regression: pick a voting method
+- Linear Functions
+  - Linear functions $\neq$ linear decision boundaries
+    - linear functions: $y=w^Tx+b$
+    - linear boundary: $sign(y=w^Tx+b)$
+- Key idea of linear regression: Find minimized square sum of residuals, which is a kind of optimization: Given $J(\theta)$ find $\hat{\theta} = argmin_{\theta\in\mathbb{R}^M}J(\theta)$
+- Optimization:
+  - ML optimization:
+    - Function may not be true goal
+    - Stopping early can help generalization error -> regularization
+    - Methods include: gradient descent, closed form, stochastic gradient descent...
+- Random guess
+  - Pick random $\theta$
+  - Evaluate J
+  - Repeat
+  - Pick $\theta$ with smallest J
+
+### Gradient Descent
+- [Matrix Calculus](https://en.wikipedia.org/wiki/Matrix_calculus)
+  - Gradient: $\dfrac{\delta J(\theta)}{\delta\theta} = [\dfrac{dJ(\theta)}{d\theta_1}, \dfrac{dJ(\theta)}{d\theta_2},..., \dfrac{dJ(\theta)}{d\theta_M}]$
+  - Gradient points to the fastest rise in the function
+- Algorithm
+  - choose initial $\theta$
+  - Repeat:
+    - compute gradient g
+    - select step size $\lambda\in\mathbb{R}$
+    - update $\theta = \theta - \lambda g$
+    - stop until reach stopping criteria (e.g. g $\approx$ 0, norm g < small number)
+  - return best $\theta$
+- Interpretation
+  - Wrong stepping size:
+    - Too big: might diverge 
+    - Too small: takes too many steps to stop
+    - We can always update $\lambda$ after each loop. Generally, we want a larger stepping size in the beginning and decrease as we approach the solution
+- Linear Regression + Gradient Descent
+    ![linear reg gradient](introML_img/linreg_gd.png)
+- Algorithm
+  ```
+  theta = theta_0
+  while g > esp:
+    g = 1/N * np.sum((theta * xi - yi) * xi)
+    theta = theta - lambda * g
+  ```
+
+### Optimization
+- Convexity
+  - $f(cx^{(1)} + (1-c)x^{(2)}) \le cf(x^{(1)}) + (1-c) f(x^{(2)}) with  0\le c\le 1$
+  - Strictly Convex
+    - $f(cx^{(1)} + (1-c)x^{(2)}) < cf(x^{(1)}) + (1-c) f(x^{(2)}) with  0 < c < 1$
+  - Convex functions look like v
+  - Concave functions look like cave
+  - L2 Regularization is convex but not strictly convex
+  - Strictly convex functions have 0 or 1 minimizers
+
+
+### Logistic Regression
+- Goal: to predict true or false with a [logistic function](https://medium.com/@karan.kamat1406/how-logistic-regression-works-the-sigmoid-function-and-maximum-likelihood-36cf7cec1f46#:~:text=The%20sigmoid%20function%20is%20more,logistic%20regression%20than%20other%20functions.) (ex. sigmoid, tanh)
+- Calculus basics
+  - For iid samples with probability mass distribution $p(X\mid\theta)$, likelihood functions is $L(\theta)=\Pi_{n=1}^N p(x^{(n)}\mid\theta)$
+  - The log likelihood is the log of L above: $l(\theta)=\log\Pi_{n=1}^N p(x^{(n)}\mid\theta) = \sum_{n=1}^N \log p(x^{(n)}\mid\theta)$
+- Maximum likelihood estimation
+  - This is the base of logistic regression. Logistic regression is trying to find the max likelihood fitting logistic funtion to the given training data
+  - Def: method to estimate the parameters of a distribution given some data
+  - First we need to assume a distribution of the dataset
+  - Then fit the data to the distribution, trying to find the best parameters
+  - We would like to make likelihood of samples maximized. Intuition is that we are assigning as much probability mass to observed data
+- [Exponential distribution](https://en.wikipedia.org/wiki/Exponential_distribution)
+   ![exp_dsitr](introML_img/Exponential_distribution_pdf_-_public_domain.svg.png)
+  - pdf: $f(x\mid\lambda)=\lambda \exp^{-\lambda x}$
+  - ![exp mle](introML_img/exp_MLE.png)
+  - <span style="color:red">TODO: Type these formulas</span>
+- Assumptions
+  - y is binary labels - {True, False}
+  - $P(Y=1\mid x,\theta) = \sigma(\theta^Tx) = \dfrac{1}{1+exp(-\theta^Tx)} = \dfrac{exp(\theta^Tx)}{exp(\theta^Tx)+1}$
+- Implications
+  - $P(Y=0\mid x,\theta) = 1 - P(Y=1\mid x,\theta) \newline = 1 - \dfrac{exp(\theta^Tx)}{exp(\theta^Tx)+1} = \dfrac{1}{1+exp(\theta^Tx)}$
+  - $\dfrac{P(Y=1\mid x,\theta)}{P(Y=0\mid x,\theta)} = exp(\theta^Tx)$
+  - ![sigma](introML_img/sigma.png)
+    - Maps $\theta^Tx$ to (0,1)
+    - differentiable everywhere
+    - Decision boundary is linear in x
+    - $\hat{y}$ = 1 if $P(Y=1\mid x,\theta) \ge 0.5$
+      - $\theta^Tx=0$ when $y=1$ 
+- [Bayesian logistic regression](https://towardsdatascience.com/cross-entropy-negative-log-likelihood-and-all-that-jazz-47a95bd2e81)
+- ![log_reg](introML_img/log_reg.png)
+- To be consistent with ML conventions, we want to minimize negative conditional log-likelihood estimation
+- Derivation of loss function $l(\theta)$ and  objective function $J(\theta) = -\dfrac{1}{N}\sum_{i=1}^N y^{(i)}\log(P(Y=1\mid x^{(i)},\theta)) +(1-y^{(i)})\log(P(Y=0\mid x^{(i)},\theta))$
+  - Loss function is negative log likelihood of y's given x's
+ ![neg_log](introML_img/neg_log_likelihood.png)
+- Gradient Calculations
+ ![log_reg_gradient](introML_img/log_reg_gradient.png)
+- Gradient Descent
+  - Inputs: training dataset, step size $\gamma$
+  ```python
+  while termination criteria not satisfied 
+    randomly sample point from dataset
+    gradient = compute gradient 
+    theta = theta - gamma * gradient
+
+  return theta
+  ```
+
+### Stochastic Gradient Descent
+- In general, there are 3 types of gradient descent
+  - Batch GD: use entire dataset (batch) at each iteration
+    - $g=dJ(\theta) = \dfrac{1}{N}\sum_{i=1}^N(dJ^{(i)}(\theta))$
+  - Stochastic GD: Approximate gradient by gradient of one random sample
+    - $g=dJ(\theta) = dJ^{(i)}(\theta)$
+  - Mini-batch GD: Approximaet by random S samples
+    - $g=dJ(\theta) = \dfrac{1}{S}\sum_{i=1}^S(dJ^{(i)}(\theta))$
+    - higher S -> lower variance, higher memory usage
+- SGD is used for optimizing computational inefficiency of traditional GD
+- SGD uses a random single traing example to calculate gradient and update parameters
+ ![sgd](introML_img/sgd.png)
+- epoch: single pass through the enture training dataset
+  - parameters are updated N times per epoch
+- Comparison
+    |method   | Steps to converge    | Computation per step | 
+    | -------- | ------- |------- |
+    | Gradient Descent|$O(log\dfrac{1}{\epsilon})$  | $O(ND)$    |
+    | SGD|$O(\dfrac{1}{\epsilon})$  | $O(D)$    |
+  - Empirically SGD reduces log likelihood much faster
+
+- Closed Form optimization
+  - mean squared error ($J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2} (y^{(i)}-\theta^Tx^{(i)})^2$ $\frac{1}{2}$ is included here for computational convenience):
+    - gradient = $\hat{\Theta} = (X^TX)^{-1}X^Ty$
+    - When $X^TX$ is invertible, $\theta$ has single solution. When it is not invertible, there exists infinitely many solutions for $\theta$. 
+
+### Bayes Optimal Classifier
+- Naive Bayes assumption:
+  - $P(Y=y\mid X=x) = \dfrac{P(X=x\mid Y=y)P(Y=y)}{P(X=x)}$
+  - X features are independent from each other given y the labels
+- Bayes Classifier
+  - $h(x) = argmax_yP(y\mid x) = argmax_y\dfrac{P(x\mid y)P(y)}{z}$
+    - Which z is a constant normalizer
+  - $= argmax_y(P(y)\Pi_\alpha P(x_\alpha\mid y)) = argmax_y (logP(y) + \sum_\alpha P(x_\alpha\mid y))$
+- [Notes from Cornell](https://www.cs.cornell.edu/courses/cs4780/2021fa/lectures/lecturenote05.html)
+
+
+### Feature Engineering
+- Non-Linear features
+  - polynomial, sigmoid, radial basis function, log
+  - The more features added, the more likely to overfit
+  - Require no changes to the model, it's just preprocessing
+
+
+### Regularization
+- Overfitting: recall that overfitting is the case that the model is too complicated that it fits training set perfectly but performs poorly on testing set
+- Regularization 
+  - A way to keep the model simply, balancing between model complexity and fitting
+  - Basically it's adding a penalty term of the model complexity to the training process
+  - Goal: find $\theta = argmin_\theta(J(\theta) + \lambda r(\theta))$
+    - with $J(\theta)$ as objective function
+    -  $\lambda r(\theta)$ a penalty term 
+  - Types:
+    |method   | $r(\theta)$    | notes | 
+    | -------- | ------- |------- |
+    | $l0$|$\mid\mid\theta\mid\mid_0 = \sum\mathbf{1}(\theta_m\ne0)$  | Count non-zero values in $\theta$ ; usually not used in practice since it is not differentiable  |
+    | $l1$ (Ridge) |$\mid\mid\theta\mid\mid_1 = \sum\mid\theta_m\mid$  | Subdifferentiable, absolute value of $\theta$ ; $\ell_1$ regularization prevents weights from going to infinity by reducing some of the weights to 0, effectively removing some of the features. |
+    | $l2$ (Lasso) |($\mid\mid\theta\mid\mid_2)^2 = \sum(\theta_m^2)$  | Differentiable, $\theta^T\theta$ ; $\ell_2$ regularization prevents weights from going to infinity by reducing the value of some of the weights to \textit{close} to 0 (reducing the effect of a feature but not necessarily removing it).   |
+
+  - Intercept term is not included in regularization
+    - learning algorithm needs to shift y values with this intercept term
+
+
+### Neural Networks
+- Each set of neuron is a simple model. By connecting these neurons, it adds and and ors to the model, the model can be complex. 
+- Activation functions: (softmax is also an activation function)
+![activation](introML_img/activation.png)
+- Algo
+  ```python
+  initialize weights and biases
+  while terminition criterion not satisfied:
+    for loop
+      compute gradient
+      update w = w - learning_rate * gradient
+  ```
+- Design decisions:
+  - no. hidden layers
+  - no. hidden units
+  - type of activation funtion
+  - form of objective function
+    - quadratic loss: $J = \frac{1}{2}(y-y^i)^2$ 
+      - $\frac{\partial J}{\partial y} = y- y^i$
+    - Binary cross entropy: $J=-(y^ilog(y)+(1-y^i)log(1-y))$
+      - $\frac{\partial J}{\partial y} = - (y^i\frac{1}{y}+(1-y^i)\frac{1}{y-1})$
+      - cross entropy has larger gradient with respect to weights.
+  - how to initialize parameters
+    - zero initial parameters: It is not reasonable to use zero initialization since a neural network with all neurons following the same path will have similar updates and hence the same weights. This also results in relatively limited model capacity and worse solution quality at convergence.
+- Softmax:
+  - $y_k = \frac{exp(b_k)}{\sum_{l=1}^k exp(b_l)}$
+### Backpropagation
+- bias term is usually not included in the backpropogation: they are not affected by any other vectors
+- Convergence is based solely on training loss, not validation loss -- as the training loss decreases, the magnitude of the gradient updates decreases, causing the model to converge
+- Taking differentiation
+  - finite difference method:
+    - Approximate differentiation by measuring the difference for the function with small changes
+- Chain Rule:
+  =![chain rule](chain_rule.png)
+  <img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/chain_rule.png"  width="200"/>
+  <img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/vector_deriv.png"  width="200"/>
+  ![vector derivatives](vector_deriv.png) 
+- Derivative for sigmoid:
+  - $s = \frac{1}{1+exp(-b)}$
+  - $\frac{\partial s}{\partial b} = \frac{exp(-b)}{(exp(-b)+1)^2} = s(1-s)$
+![nn_derivative](introML_img/nn_derivative.png)
+- Vanishing gradient:
+  - sigmoid gradient is the cause: it is product of small probabilities
+```python
+for epochs:
+  for datapoints in training data:
+    o = object(x, y, alpha, beta) # forward prop
+    g_a = gradient(J_a)
+    g_b = gradient(J_b) # backprop
+    # update parameters
+    alpha -= learning_rate * g_a
+    beta -= learning_rate * g_b
+  # mean cross entropy
+  J = J(alpha, beta)
+return alpha, beta
+```
+- Why use backprop? computations from forward prop can be reused
+  
+### ML Social Impact 
+- criterias to fit in human subjects
+  - fair/equatible w.r.t. demographic groups
+  - explainability/interpretability
+  - privacy preserving
+  - robustness to adversarial attack
+  - data/distribution shift
+  - transparency
+  - environmentally-friendly
+- Confusion matrix
+-  |   | Predicted positive    | Predicted negative | 
+    | -------- | ------- |------- |
+    | Actutal Positive |True Positive (TP)  | False Negative (FN)    |
+    | Actutal Negative | False Positive (FP) | True Negative (TN)    |
+- Asymmetric may be a problem with model only evaluated with accuracy
+- Other metrics:
+  - False Positive rate = $\frac{FP}{N} = \frac{FP}{FP+TN}$
+  - False negative rate = $\frac{FN}{P} = \frac{FN}{TP+FN}$
+  - Positive Predictive Value (Precision) = $\frac{TP}{PP} = \frac{TP}{TP+FP}$
+  - Negative Predictive Value (Recall) = $\frac{TN}{PN} = \frac{TN}{TN+FN}$
+- Fairness definitions
+  - Independece (Selection rate parity)
+    - Definition: $P(h(X,A) = +1|A=a_i) = P(h(X,A) = +1|A=a_j) \forall a_i, a_j$
+    -  Achieve fairness
+      - Preprocessing
+        - Preprocess the training data to be independent
+        - Massaging the dataset
+        - Reweighting the dataset (upweigh rare labels)
+      - Additional constaints
+        - regularization
+      - Post-processing
+    - But! permits laziness (flip a coin)
+  - Separation
+    - Definition: $P(h(X,A) = +1|Y=-1,A=a_i) = P(h(X,A) = +1|Y=-1,A=a_j) \forall a_i, a_j$ and $P(h(X,A) = -1|Y=+1,A=a_i)P(h(X,A) = -1|Y=+1,A=a_j) \forall a_i, a_j$
+    - ROC(receiver operating characteristic) curve: y-axis TPR, x-axis FPR 
+    - But! perpetuates existing biases in the training data, does not eliminate the bias
+  - Sufficiency (equality of FPR and FNR)
+    - Definition: 
+    - Most off-the-shelf ML models can achieve sufficiency without intervention
+  - Random classifier satisfies independence and separation but not sufficiency (????)
+
+
+
+### PAC - Probably Approximately Correct Learning
+- Notations:
+  - $c^*$: true function
+  - $h$: Hypothesis (possible model within a set of models, ex. linear regression with all parameters determined from training.)
+  - $\mathbb{H}$: set of hypothesis
+- Types of Risk
+  - Expected Risk (true error)
+  - Empirical Risk (training error)
+- Relationship between $c^*$ and $\mathbb{H}$
+  - Realizable and Agnostic
+    - Realizable: $c^*\in \mathbb{H}$
+  - Finite and Infinite:
+    - $|\mathbb{H}| < \infin$ 
+    - Finite: majority vote, decision tree
+    - Infinite: linear boundaries
+- True Error Bound
+  - Here we want to know the bound for true error rate when training error is 0. 
+  - Assumption: there are k bad hypothesis in $\mathbb{H}$
+  - Given a dataset with M data points, we want to know the probability of the bad hypothesis predicts all points correctly. 
+  - PAC learnable: $\exist \epsilon, \delta s.t. P(|R(h) - \hat{R}(h) | \le \epsilon) \ge 1-\delta \forall h\in H$
+
+- VC Bounds
+  - Shatter: First we can choose the shape/locations of the points to be separated by H. We need to test out all possible combinations of the labels and see if all of them can be separated with some h in H. 
+  - If a set of points that can always be classified correctly with some h in H, H can shatter these points. 
+  - VC dimension of H is the largest dimension that H can shatter. (There exists a dataset of k dimension that H can shatter. VC(H) = max(k))
+  - For linear separators: VC_dim(H) = dim(H) + 1
+![PAC](introML_img/PAC_learning.png)
+
+
+- MLE find $\hat{\theta} = argmax_\theta p(D|\theta)$
+- MAP (Maximum a Posterior)
+  - Post/Prior? 
+    - In Bayensian probability theory, $p(x|\theta) = \frac{p(\theta|x)p(x)}{p(\theta)}$
+    - In this case, in terms of likelihood $p(x|\theta)$, the prior is $p(\theta)$, posterior is $p(\theta|x)$
+      - If the prior and posterior are in the same distribution family, they are the conjugate distributions with respect to the likelihood function.
+    - MAP finds $\hat{\theta} = argmax_\theta p(\theta|D) = argmax_\theta p(D|\theta)p(\theta)/p(D)= argmax_\theta p(D|\theta)p(\theta)= argmax_\theta log (p(D|\theta))+log(p(\theta))$
+- [Notes from Stanford](https://web.stanford.edu/class/archive/cs/cs109/cs109.1218/files/student_drive/7.5.pdf)
+
+
+
+
+---- End of Exam 2 ------- -->
+<h3 id="cnn">CNN</h3>
+<ul>
+<li>Filters/kernels: small matrix that convolved with same-sized sections of the image matrix</li>
+<li>identity, edge detection, blur, sharpen</li>
+<li>padding: ensure border features captured</li>
+<li>pooling: downsampling
+<ul>
+<li>max-pooling</li>
+</ul>
+</li>
+<li>pytorch output_size = (input_size - kernel_size + 2 * padding) / stride + 1</li>
+</ul>
+<h3 id="rnn">RNN</h3>
+<ul>
+<li>vanishing gradient: backprop through the layers makes gradient really small</li>
+</ul>
+<h3 id="rnn-lm">RNN-LM</h3>
+<ul>
+<li>n-gram models
+<ul>
+<li>generate realistic looking sentences in a human language</li>
+<li>condition on the last n-1 words to sample the nth word</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi mathvariant="normal">Π</mi><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></msubsup><mi>p</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>w</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\Pi_{t=1}^{T} p(w_t|w_{t-1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0913em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord">Π</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-2.4519em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
+<li>count n-gram frequencies to get the probabilities</li>
+</ul>
+</li>
+</ul>
+<!-- ![RNN_LM](introML_img/RNN_LM.png) -->
+<ul>
+<li>
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RNN_LM.png"  width="400"/>
+<ul>
+<li>Key ideas
+<ul>
+<li>convert all previous words to fixed length vector</li>
+<li>definr distribution <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo stretchy="false">(</mo><msub><mi>w</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>f</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>w</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>w</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">p(w_t|f_{\theta}(w_{t-1}, ..., w_1))</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">p</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">))</span></span></span></span> conditioning on vector <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>h</mi><mi>t</mi></msub><mo>=</mo><msub><mi>f</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>w</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo separator="true">,</mo><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mi mathvariant="normal">.</mi><mo separator="true">,</mo><msub><mi>w</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">h_t=f_{\theta}(w_{t-1}, ..., w_1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">h</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">...</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02691em;">w</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:-0.0269em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></li>
+</ul>
+</li>
+<li>Learning RNN
+<ul>
+<li>part of speech tagging</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- - ![RNN_LM_algo](introML_img/Elman_RNN.png) -->
+<ul>
+<li><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/Elman_RNN.png"  width="400"/> <img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RNN_LM_loss.png"  width="400"/> <img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/attention.png"  width="400"/></li>
+</ul>
+<!-- - ![RNN_LM_loss](introML_img/RNN_LM_loss.png) -->
+<!-- - Attention -->
+<!-- - ![Attention](introML_img/attention.png) -->
+<ul>
+<li>multiheaded attention: like multiple channels in convolution layer</li>
+<li>It allows a model to simultaneously focus on different aspects of an input sequence</li>
+<li>Concatenate all outputs to get a single vector fr each time step</li>
+<li>Transformer LM
+<ul>
+<li>RNN computation graph grows linearly with number of input tokens; Transformer grows quadratically</li>
+<li>Each layer consists of attention, feed-forward nn, layer normalization, residual connecton</li>
+<li>layer normalization:</li>
+</ul>
+</li>
+</ul>
+<!-- - ![layer normalization](introML_img/tf_norm.png) -->
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/tf_norm.png"  width="400"/>
+<h3 id="audodiff">AudoDiff</h3>
+<h3 id="pre-training-fine-tuning">Pre-training, Fine-tuning</h3>
+<ul>
+<li>fix the just trained weights for later layers; use pre-trained weights as initialization</li>
+<li>supervised pre-training: measure error</li>
+<li>unsupervised: reconstruction error - autoencoder</li>
+<li>Overfitting  - not enough labeling, data -&gt; use related pre-trained model</li>
+<li>not enought labelled data to fine-tune? -&gt; in-context learning, pass a few examples to the model as input w/o performing updates
+<ul>
+<li>few-shot, one-shot, zero-shot (in context)</li>
+</ul>
+</li>
+<li>RLHF</li>
+</ul>
+<h3 id="reinforcement-learning">Reinforcement Learning</h3>
+<ul>
+<li>Formulation: state space, action space, reward function (stochastic, deterministic), transition function, policy(<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi></mrow><annotation encoding="application/x-tex">\pi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span></span></span></span> specifies an action to take in every state), value function(<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>V</mi><mi>π</mi></msup><mo>:</mo><mi>S</mi><mo>→</mo><mi>R</mi></mrow><annotation encoding="application/x-tex">V^{\pi}: S\rightarrow R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6644em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">π</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">:</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">→</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.00773em;">R</span></span></span></span> expected total payoff of starting in state s executing policy <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi></mrow><annotation encoding="application/x-tex">\pi</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">π</span></span></span></span>)</li>
+</ul>
+<!-- ![RL terminology](introML_img/RL_term.png) -->
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_term.png"  width="400"/>
+- MDP
+  - objective function: total reward $E[\sum_{t=0}^{\infin}\gamma^t r_t]$: infinite horizon expected future discounted reward
+- Bellman's Equation
+- Fixed Point Iteration
+  - system of equations; rewrite with each variable on the LHS; update each parameter until converge
+<ul>
+<li>Value iterations</li>
+</ul>
+<!-- ![RL value](introML_img/RL_value_iter.png)
+![RL value iter variant3](introML_img/RL_val_iter2.png)
+![RL value iter variant1](introML_img/RL_val_v1.png)
+![RL value iter variant2](introML_img/RL_val_v2.png)
+![RL value iteration sync and async](introML_img/RL_sync_async.png)
+![RL value iteration sync and async](introML_img/RL_conv.png)
+ -->
+<p><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_value_iter.png"  width="400"/><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_val_iter2.png"  width="400"/><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_val_v1.png"  width="400"/><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_val_v2.png"  width="400"/><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_sync_async.png"  width="400"/><img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_conv.png"  width="400"/></p>
+<ul>
+<li>Policy Iterations
+<ul>
+<li>stochastic rewards: deterministic rewrds depending on the next state (transitions are stochastic)
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_policy_iter.png" alt="RL Policy Iter"></li>
+<li>value iteration: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi mathvariant="normal">∣</mi><mi>S</mi><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup><mi mathvariant="normal">∣</mi><mi>A</mi><mi mathvariant="normal">∣</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(|S|^2|A|)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathnormal">A</span><span class="mord">∣</span><span class="mclose">)</span></span></span></span>/iter</li>
+<li>policy iteration: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi mathvariant="normal">∣</mi><mi>S</mi><msup><mi mathvariant="normal">∣</mi><mn>2</mn></msup><mi mathvariant="normal">∣</mi><mi>A</mi><mi mathvariant="normal">∣</mi><mo>+</mo><mi mathvariant="normal">∣</mi><mi>S</mi><msup><mi mathvariant="normal">∣</mi><mn>3</mn></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(|S|^2|A|+|S|^3)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathnormal">A</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord">∣</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span>/iter empirically requires fewer iterations</li>
+</ul>
+</li>
+<li>Q-learning
+<ul>
+<li>problem: reward and transition funcs are unkonwn
+<ul>
+<li>online learning (Q-table)</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">\epsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ϵ</span></span></span></span> online learning: with probability <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>ϵ</mi></mrow><annotation encoding="application/x-tex">1-\epsilon</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7278em;vertical-align:-0.0833em;"></span><span class="mord">1</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">ϵ</span></span></span></span> take random action; otherwise take greedy action: Temporal difference
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_epsilon.png" alt="RL epsilon"></li>
+<li>converge to optimal if every valid state-action pair is visited infinitely often; finite rewards; initial Q values are finite; learning rate follows some schedule</li>
+</ul>
+</li>
+<li>problem: infinite state/action spaces
+<ul>
+<li>Deep RL
+neural network: represent states with some feature vector; stochastic gradient descent (consider one state-action pair in each iteration): fundamentally connected to regression, uses nn to predict Q-value
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/RL_nn.png" alt="Deep RL"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Experience replay: replay buffer; uniformly draw from the buffer for update</li>
+</ul>
+<h3 id="recommender-systems">Recommender Systems</h3>
+<ul>
+<li>content filtering: need external information; easy to add new items</li>
+<li>Collaboorative filtering: no sode information, not work on new items with no ratings
+<ul>
+<li>neighborhood methods: kmeans</li>
+<li>latent factor methods: matrix factorization (U: user factors, V: item factors)
+<ul>
+<li>uncontrained matrix factorization: use only observed data; alternating least squares
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/MF.png" alt="MF"></li>
+<li>SVD:  If R fully
+observed and no
+regularization, the
+optimal UVT from
+SVD equals the
+optimal UVT from
+Unconstrained MF</li>
+<li>NMF</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="pca">PCA</h3>
+<ul>
+<li>Centering/whitening the data to 0 mean</li>
+<li>Projection: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mo stretchy="false">(</mo><mfrac><mrow><msup><mi>v</mi><mi>T</mi></msup><mi>x</mi></mrow><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mi>v</mi><mi mathvariant="normal">∣</mi><msub><mi mathvariant="normal">∣</mi><mn>2</mn></msub></mrow></mfrac><mo stretchy="false">)</mo><mfrac><mi>v</mi><mrow><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mi>v</mi><mi mathvariant="normal">∣</mi><msub><mi mathvariant="normal">∣</mi><mn>2</mn></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">z = (\frac{v^Tx}{||v||_2})\frac{v}{||v||_2}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.04398em;">z</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.5574em;vertical-align:-0.52em;"></span><span class="mopen">(</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0374em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mtight">∣</span><span class="mord mtight"><span class="mord mtight">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3173em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9191em;"><span style="top:-2.931em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord mathnormal mtight">x</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose">)</span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6954em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mtight">∣</span><span class="mord mtight"><span class="mord mtight">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3173em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover accent="true"><mi>v</mi><mo>^</mo></mover><mo>=</mo><mi>a</mi><mi>r</mi><mi>g</mi><mi>m</mi><mi>i</mi><msub><mi>n</mi><mrow><mi>v</mi><mo>:</mo><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mi>v</mi><mi mathvariant="normal">∣</mi><msubsup><mi mathvariant="normal">∣</mi><mn>2</mn><mn>2</mn></msubsup><mo>=</mo><mn>1</mn></mrow></msub><msubsup><mo>∑</mo><mrow><mi>n</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mi>x</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup><mo>−</mo><mo stretchy="false">(</mo><msup><mi>v</mi><mi>T</mi></msup><msup><mi>x</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo><mi>v</mi><mi mathvariant="normal">∣</mi><msubsup><mi mathvariant="normal">∣</mi><mn>2</mn><mn>2</mn></msubsup><mo>=</mo><mi>a</mi><mi>r</mi><mi>g</mi><mi>m</mi><mi>i</mi><msub><mi>n</mi><mrow><mi>v</mi><mo>:</mo><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><mi>v</mi><mi mathvariant="normal">∣</mi><msubsup><mi mathvariant="normal">∣</mi><mn>2</mn><mn>2</mn></msubsup><mo>=</mo><mn>1</mn></mrow></msub><msup><mi>v</mi><mi>T</mi></msup><mo stretchy="false">(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo stretchy="false">)</mo><mi>v</mi></mrow><annotation encoding="application/x-tex">\hat{v}=argmin_{v:||v||_2^2=1}\sum_{n=1}^N||x^{(n)}- (v^Tx^{(n)})v||_2^2=argmin_{v:||v||_2^2=1}v^T(X^TX)v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6944em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.2222em;"><span class="mord">^</span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.4181em;vertical-align:-0.4368em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">mi</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.4812em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mrel mtight">:</span><span class="mord mtight">∣∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mtight">∣</span><span class="mord mtight"><span class="mord mtight">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8051em;"><span style="top:-2.1885em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span><span style="top:-2.8448em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3115em;"><span></span></span></span></span></span></span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4368em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9812em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">∣∣</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">n</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">n</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mclose">)</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mord">∣</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-2.4519em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2782em;vertical-align:-0.4368em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">mi</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.4812em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mrel mtight">:</span><span class="mord mtight">∣∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">v</span><span class="mord mtight">∣</span><span class="mord mtight"><span class="mord mtight">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8051em;"><span style="top:-2.1885em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span><span style="top:-2.8448em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3115em;"><span></span></span></span></span></span></span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4368em;"><span></span></span></span></span></span></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mclose">)</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span></li>
+<li>eigenvectors and eigenvalues <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mi>v</mi><mo>=</mo><mi>λ</mi><mi>v</mi></mrow><annotation encoding="application/x-tex">Av=\lambda v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">λ</span><span class="mord mathnormal" style="margin-right:0.03588em;">v</span></span></span></span>; eigevectors of symmetricmatrices are orthogonal</li>
+<li>unique variance on each component</li>
+<li>SVD: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mi>U</mi><mi>S</mi><msup><mi>V</mi><mi>T</mi></msup></mrow><annotation encoding="application/x-tex">X=USV^T</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">X</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8413em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.22222em;">V</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8413em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span></span></span></span></span></span></span> U cols and V cols are eigenvectors</li>
+<li>variance for ith PC: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mfrac><msub><mi>λ</mi><mi>i</mi></msub><mrow><mo>∑</mo><msub><mi>λ</mi><mi>i</mi></msub></mrow></mfrac></mrow><annotation encoding="application/x-tex">\frac{\lambda_i}{\sum\lambda_i}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.4162em;vertical-align:-0.52em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8962em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop op-symbol small-op mtight" style="position:relative;top:0em;">∑</span><span class="mspace mtight" style="margin-right:0.1952em;"></span><span class="mord mtight"><span class="mord mathnormal mtight">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3281em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.4101em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">λ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3281em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.52em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+<li>shortcomings: linear relationships, outliers, interpretability, information loss</li>
+<li>autoencoders: nn implicitly learn low-dimensional representations</li>
+</ul>
+<h3 id="ensemble-methods">Ensemble Methods</h3>
+<ul>
+<li>Weighted Majority algo: only learns weight for classifiers
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/ensemble_wma.png" alt="Weighted Majority algo">
+<ul>
+<li>Upper bounds on number of mistakes in a given sequence of trials:
+<ul>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>l</mi><mi>o</mi><mi>g</mi><mi mathvariant="normal">∣</mi><mi>A</mi><mi mathvariant="normal">∣</mi><mo>+</mo><mi>m</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(log|A|+m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord">∣</span><span class="mord mathnormal">A</span><span class="mord">∣</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span></span></span></span> if one algo of A (pool) makes at most m mistakes</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mi mathvariant="normal">∣</mi><mi>A</mi><mi mathvariant="normal">∣</mi><mi mathvariant="normal">/</mi><mi>k</mi><mo stretchy="false">)</mo><mo>+</mo><mi>m</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(log(|A|/k)+m)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord">∣</span><span class="mord mathnormal">A</span><span class="mord">∣/</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span></span></span></span> subpooll of k algos</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>l</mi><mi>o</mi><mi>g</mi><mo stretchy="false">(</mo><mi mathvariant="normal">∣</mi><mi>A</mi><mi mathvariant="normal">∣</mi><mi mathvariant="normal">/</mi><mi>k</mi><mo stretchy="false">)</mo><mo>+</mo><mi>m</mi><mi mathvariant="normal">/</mi><mi>k</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(log(|A|/k)+m/k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord mathnormal">o</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mopen">(</span><span class="mord">∣</span><span class="mord mathnormal">A</span><span class="mord">∣/</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">m</span><span class="mord">/</span><span class="mord mathnormal" style="margin-right:0.03148em;">k</span><span class="mclose">)</span></span></span></span> total number of mistakes of subpool of k algos of A is at most m</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>AdaBoost: learn weak learners and weights for each learner
+<img src="file:////Users/lucy/Library/CloudStorage/GoogleDrive-lucysun2@andrew.cmu.edu/My Drive/CMU_Notes/Fall24/introML_img/adaboost.png" alt="Adaboost algo">
+<ul>
+<li>mistake bounds: if each weak hypothesis is slightly better than random so that <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>γ</mi><mi>t</mi></msub><mo>≥</mo><mi>γ</mi></mrow><annotation encoding="application/x-tex">\gamma_t\ge\gamma</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8304em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0556em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≥</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span></span></span></span> for some <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\gamma&gt;0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7335em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05556em;">γ</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0</span></span></span></span> then training error drops exponentially fast</li>
+<li>generalization error: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>r</mi><mo stretchy="false">[</mo><mi>H</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo mathvariant="normal">≠</mo><mi>y</mi><mo stretchy="false">]</mo><mo>+</mo><mi>O</mi><mo stretchy="false">(</mo><msqrt><mfrac><mrow><mi>T</mi><mi>d</mi></mrow><mi>N</mi></mfrac></msqrt><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Pr[H(x)\ne y]+O(\sqrt{\frac{Td}{N}})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.08125em;">H</span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel"><span class="mrel"><span class="mord vbox"><span class="thinbox"><span class="rlap"><span class="strut" style="height:0.8889em;vertical-align:-0.1944em;"></span><span class="inner"><span class="mord"><span class="mrel"></span></span></span><span class="fix"></span></span></span></span></span><span class="mrel">=</span></span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.84em;vertical-align:-0.5874em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.2526em;"><span class="svg-align" style="top:-3.8em;"><span class="pstrut" style="height:3.8em;"></span><span class="mord" style="padding-left:1em;"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8801em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span><span class="mord mathnormal mtight">d</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top:-3.2126em;"><span class="pstrut" style="height:3.8em;"></span><span class="hide-tail" style="min-width:1.02em;height:1.88em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.88em" viewBox="0 0 400000 1944" preserveAspectRatio="xMinYMin slice"><path d="M983 90
+l0 -0
+c4,-6.7,10,-10,18,-10 H400000v40
+H1013.1s-83.4,268,-264.1,840c-180.7,572,-277,876.3,-289,913c-4.7,4.7,-12.7,7,-24,7
+s-12,0,-12,0c-1.3,-3.3,-3.7,-11.7,-7,-25c-35.3,-125.3,-106.7,-373.3,-214,-744
+c-10,12,-21,25,-33,39s-32,39,-32,39c-6,-5.3,-15,-14,-27,-26s25,-30,25,-30
+c26.7,-32.7,52,-63,76,-91s52,-60,52,-60s208,722,208,722
+c56,-175.3,126.3,-397.3,211,-666c84.7,-268.7,153.8,-488.2,207.5,-658.5
+c53.7,-170.3,84.5,-266.8,92.5,-289.5z
+M1001 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.5874em;"><span></span></span></span></span></span><span class="mclose">)</span></span></span></span> : d is VC dim of weak learner, T is boosting rounds, N is sample size; however, empirical results show adaboost does not tend to overfit</li>
+</ul>
+</li>
+<li>Bagging: bootstrap aggregation
+<ul>
+<li>sample bagging: repeated sample with replacement</li>
+<li>feature bagging: repeatedly sample w replacement subset of features</li>
+<li>random forest: draw sample of training examples; learn DT; each node randomly sample subset features before splitting</li>
+<li>OOB: error of a sample that are not used in training for some trees; can be used for hyperparameter optimization</li>
+<li>Feature importance: add the information gain for feature when selected</li>
+<li>Upper bound of generalization can be derived from accuracy of each individual classifier and dependence between them</li>
+</ul>
+</li>
+</ul>
+<h3 id="clustering-k-means">Clustering (K-Means)</h3>
+<ul>
+<li>objective: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>r</mi><mi>g</mi><mi>m</mi><mi>i</mi><msub><mi>n</mi><mi>C</mi></msub><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>N</mi></msubsup><mi>m</mi><mi>i</mi><msub><mi>n</mi><mi>j</mi></msub><mi mathvariant="normal">∣</mi><mi mathvariant="normal">∣</mi><msup><mi>x</mi><mrow><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo></mrow></msup><mo>−</mo><msub><mi>c</mi><mi>j</mi></msub><mi mathvariant="normal">∣</mi><msubsup><mi mathvariant="normal">∣</mi><mn>2</mn><mn>2</mn></msubsup></mrow><annotation encoding="application/x-tex">argmin_C\sum_{i=1}^N min_j||x^{(i)}-c_j||_2^2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.2809em;vertical-align:-0.2997em;"></span><span class="mord mathnormal">a</span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">mi</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.07153em;">C</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9812em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">mi</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord">∣∣</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mathnormal mtight">i</span><span class="mclose mtight">)</span></span></span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1002em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal">c</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05724em;">j</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord">∣</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-2.4519em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2481em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li>Repeat: pick each cluster assignment to minimize distance; pick each cluster center to minimize distance (block coordinate descent)</li>
+<li>Initialization:
+<ul>
+<li>random centers: works well when data from well-separated gaussians; may get stuck in local optima; can be arbitrarily bad; Pr[each initial cetner is in a diff Gaussian] <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>≈</mo><mfrac><mn>1</mn><msup><mi>e</mi><mi>k</mi></msup></mfrac></mrow><annotation encoding="application/x-tex">\approx \frac{1}{e^k}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4831em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2025em;vertical-align:-0.3574em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8451em;"><span style="top:-2.6426em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">e</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.782em;"><span style="top:-2.786em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3574em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span>: unlikely when k is large</li>
+<li>furthest point heuristic: pick first cluster enter randomly, then pick each subsequent center farthest possible from previous centers; outliers as problem</li>
+<li>k-Means++(Lloyd’s Method): Pick center proportional to <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>D</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">D^2(x)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0641em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mclose">)</span></span></span></span>: weighted probability distribution; in expectation O(log k) to optimal solution</li>
+</ul>
+</li>
+<li>improve performance: choose k: elbo of curve; random restarts;</li>
+</ul>
+
+            <script async src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+            
+        </body>
+        </html>

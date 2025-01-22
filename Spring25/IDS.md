@@ -1,0 +1,17 @@
+### Data Quality
+- Completeness
+  - statistics imputation
+  - alternatiev source
+  - reweight the data
+  - throw out
+  - Find error: type of missing, compare with alternaive data
+- Coherent
+  - Data makes sense to itself or common sense
+  - Nominal/Ordinal Fields
+  - Interval data: does not necessarily have 0
+  - Ratio data: continuous data with true 0
+- Correctness
+  - Source of bias
+  - Collect from another source
+- Accountability
+  - 
