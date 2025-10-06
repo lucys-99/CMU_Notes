@@ -38,7 +38,7 @@ While using a critic helps, there's still a trade-off between bias and variance 
 Using this N-step return to calculate the advantage helps in two ways:
 1. **It reduces bias** compared to a 1-step return because it incorporates more real, unbiased reward information before relying on the critic's estimate.
 2. **It reduces variance** compared to a full Monte Carlo return because the sequence of random variables is much shorter (`$N$` steps vs. the rest of the episode).
-![A2C Diagram](CMU_Notes/DRL/img/A2C.png)
+![A2C Diagram](img/A2C.png)
 Improve diversity of updates:
 [[A3C]]
 
@@ -62,9 +62,9 @@ The core idea of A3C is to have multiple "worker" agents interacting with their 
 #### Problem:
 - The problem with that is the experience is very correlated and sequential which can cause instability when training the neural network. We want to diversify the experience and de-correlated the gradient updates. In other words, we want to parallelize the collection of experiences and stabilize training with multiple threads of experiences and different exploration strategies. --> Asynchronous Deep RL
 - Distributed RL
-	- Distributed Synchronous RL-A2C: All agents have identical policies. Each one collect experiences, compute gradients, aggregate all of them to update the policy, and reshare.![Distributed_A2C](CMU_Notes/DRL/img/Distributed_A2C.png)
-	- Distributed Asynchronous RL-A3C: Agents can have slightly different policies where each worker updates the global network, one at a time.![Distributed_A3C.png](CMU_Notes/DRL/img/Distributed_A3C.png)
-![Async_pseudocode.png](CMU_Notes/DRL/img/Async_pseudocode.png)
+	- Distributed Synchronous RL-A2C: All agents have identical policies. Each one collect experiences, compute gradients, aggregate all of them to update the policy, and reshare.![Distributed_A2C](img/Distributed_A2C.png)
+	- Distributed Asynchronous RL-A3C: Agents can have slightly different policies where each worker updates the global network, one at a time.![Distributed_A3C.png](img/Distributed_A3C.png)
+![Async_pseudocode.png](img/Async_pseudocode.png)
 ### Why Use A3C? Solving Key Problems in RL
 
 A3C was designed to address two major challenges faced by earlier algorithms like DQN:
@@ -83,7 +83,7 @@ Standard online RL algorithms learn from consecutive samples, which are highly c
 
 Approximation trick (sample state from $\mu$, actions from $\pi$): 
 Scribe page 5-8
-![AWR illustration](CMU_Notes/DRL/img/AWR-distribution.png)
+![AWR illustration](img/AWR-distribution.png)
 
 #### 1. **AWR Objective**
 $\max_{\pi} \; \mathbb{E}_{s \sim d^\mu(s)} \Big[ \mathbb{E}_{a \sim \pi(\cdot|s)} \big[ A^\mu(s,a) \big] - \alpha D_{KL}(\pi \,\|\, \mu) \Big]$
@@ -164,8 +164,8 @@ Now insert the baseline value function $V^\mu$: $r(s_t, a_t) = A^\mu(s_t, a_t) +
 Substitute back: $J(\pi) = \mathbb{E}_{\tau \sim P_\pi} \left[ \sum_{t=0}^\infty \gamma^t \big( A^\mu(s_t, a_t) + V^\mu(s_t) - \gamma V^\mu(s_{t+1}) \big) \right]$
 The telescoping terms with $V^\mu$ collapse, leaving: $J(\pi) = J(\mu) + \mathbb{E}_{\tau \sim P_\pi} \left[ \sum_{t=0}^\infty \gamma^t A^\mu(s_t, a_t) \right]$
 which is exactly the statement of the lemma. 
-![performance difference lemma proof 1](CMU_Notes/DRL/img/Performance-diff-proof1.png)
-![performance proof 2](CMU_Notes/DRL/img/performance-diff-proof2.png)
+![performance difference lemma proof 1](img/Performance-diff-proof1.png)
+![performance proof 2](img/performance-diff-proof2.png)
 #### 5. **Key Takeaways**
 - **Formal statement:** $J(\pi) - J(\mu) = \mathbb{E}_{\tau \sim P_\pi(\tau)} \Big[ \sum_{t=0}^\infty \gamma^t A^\mu(s_t, a_t) \Big]$
 - $A^\mu(s_t, a_t)$ estimated via a critic
@@ -269,7 +269,7 @@ So when we talk about sampling:
 - On-policy (sample from $\pi$): unbiased, stable, but data-hungry.
 - Off-policy (sample from $\mu$): efficient, but needs correction for distribution shift.
 - Algorithms choose one depending on whether stability or efficiency is more critical.
-![policy value based summary](CMU_Notes/DRL/img/policy-value-based-methods.png)
+![policy value based summary](img/policy-value-based-methods.png)
 **Value-based methods (e.g. Q-learning) struggle with:**
 - Large/continuous action spaces
 - Instability in function approximation  
@@ -331,7 +331,7 @@ So when we talk about sampling:
 # DQN
 
 DQNs are a variant of fitted Q-iteration that use gradient-based updates for the parameters of the value function.
-![DQN Replay](CMU_Notes/DRL/img/DQN-replay.png)
+![DQN Replay](img/DQN-replay.png)
 To solve the problem of highly correlated updates in on-policy training, two mechanisms are introduced:
 1. **Replay buffer**: Stores experience tuples (s,a,r,s′). Updates to $Q_{θ_t​​}$ are made using i.i.d. samples from this buffer, which is populated by trajectories of the current policy πt​.
 2. **Target network**: A separate network with parameters θˉ is used to compute the target y(s,a). Its parameters are updated only periodically to stabilize training.
@@ -397,7 +397,7 @@ $L(\theta) = \mathbb{E}_{(s,a,r,s') \sim D} \big[ \ell_\kappa\big( y - Q_\theta(
 	- $\ell_\delta(e) =\begin{cases}\frac{1}{2} e^2 & \text{if } |e| \leq \delta, \delta \left( |e| - \frac{1}{2} \delta \right) & \text{otherwise.}\end{cases}$
 ## Double DQN
 $y_t = r_{t+1} + \gamma Q_{\text{target}}(s_{t+1}, \arg \max_a Q_\omega(s_{t+1}, a))$
-![DDQN](CMU_Notes/DRL/img/DDQN.png)
+![DDQN](img/DDQN.png)
 ### How Double DQN Leverages the Delay: Reducing Overestimation Bias
 
 The specific innovation of **Double DQN** is to address a different problem: **maximization bias**.
@@ -416,8 +416,8 @@ In summary, the **delay itself is for stability**, and Double DQN **leverages th
 ### Overestimation Bias
 -  UTD update to data Ratio: high UTD amplifies the compounding errors
 - target overestimate due to max operator selecting positively noisy actions and compounding through bootstrapping
-![double q learning](CMU_Notes/DRL/img/double-q-learning.png)
-![deep double q learning ru](CMU_Notes/DRL/img/Deep-double-q-learning-ru.png)
+![double q learning](img/double-q-learning.png)
+![deep double q learning ru](img/Deep-double-q-learning-ru.png)
 ## ChatGPT Summary
 #### 1. **The Overestimation Problem in DQN**
 In Q-learning (and DQN), the update target is: $y = r + \gamma \max_{a'} Q_{\theta^-}(s', a')$
@@ -501,7 +501,7 @@ Work embarrasingly well in low-dimensions
 5. **Refit**: Calculate a new mean and variance based _only_ on the elite samples. This new, refined distribution is then used to generate the next population.
 By repeatedly fitting the distribution to the best-performing samples, CEM quickly hones in on high-reward regions of the parameter space.
 
-![CEM](CMU_Notes/DRL/img/CEM.png)
+![CEM](img/CEM.png)
 
 ### Covariance Matrix Adaptation
 The second evolutionary strategy discussed is the **Covariance Matrix Adaptation Evolution Strategy (CMA-ES)**. This method samples policy parameters from a **multivariate Gaussian distribution** with a **full covariance matrix**, which distinguishes it from strategies that use different variances for each dimension. This full covariance matrix enables CMA-ES to capture **correlations between parameters**. The mean and covariance matrix are then iteratively updated based on the distribution of samples that achieved the highest fitness scores.
@@ -518,7 +518,7 @@ Adapting the covariance matrix allows the search to:
 - **Rotate** its orientation to align with ridges in the landscape.
 
 This makes CMA-ES much more efficient at finding optimal solutions when the parameters are correlated.
-![CMA-ES](CMU_Notes/DRL/img/CMA-ES.png)
+![CMA-ES](img/CMA-ES.png)
 ### Evolution for Action Selection
 - Generate diverse candidate action trajectories, assess each by summing cumulative rewards, retain the highest-scoring trajectories, and apply iterative perturbations until a trajectory meeting predefined performance criteria is identified.
 - Rather than optimizing policy parameters directly, perform **model-based trajectory optimization** by searching in the action space to maximize total reward or reach a target optimal state.
@@ -529,16 +529,16 @@ NES bridges the gap between evolutionary methods and gradient-based methods. Ins
 
 The key idea is to find the direction in the _distribution space_ that maximally increases the expected fitness. It treats the search distribution itself as the object to be optimized and updates its parameters (e.g., the mean and covariance of a Gaussian) to produce better samples. It effectively computes a "gradient" for the entire population, making it a more principled and often more efficient search strategy than simpler methods.
 
-![policy vs evolutionary](CMU_Notes/DRL/img/policy-vs-evolutionary.png)
+![policy vs evolutionary](img/policy-vs-evolutionary.png)
 
 How to sample from gaussian distribution: $z \sim \mathcal{N}(\mu, \Sigma)$
 $z = \mu + \Sigma^{\frac{1}{2}}\epsilon \text{ where } \epsilon \sim \mathcal{N}(0, I)$
 ### Distributed Evolution
 Communications between GPUs becomes bottleneck. Sending vectors to each worker is very expensive.
-![NES](CMU_Notes/DRL/img/NES.png)
+![NES](img/NES.png)
 
 Instead, send random seeds to workers and sample locally.
-![distributed evolution](CMU_Notes/DRL/img/distributed-evolution.png)
+![distributed evolution](img/distributed-evolution.png)
 Despite these advantages, ES can still get stuck in local optima. A simple strategy to improve robustness is to evaluate candidate policies across multiple related tasks or environments. This forces exploration to generalize beyond a single setting, reducing the chance of converging prematurely. While there are no formal guarantees, empirical studies show this approach helps ES escape poor local solutions and improves overall performance.
 
 ---
@@ -1073,7 +1073,7 @@ The objective becomes: $\mathcal{L}_{\text{CLIP}}(\theta) = \mathbb{E}_{s \sim d
 This means if $r(\theta)$ moves outside $[1-\epsilon, 1+\epsilon]$, the advantage is not further increased, preventing excessively large policy updates.
 ### How PPO Improves the Clip Term
 PPO improves stability by ensuring that the policy update does not push $r(\theta)$ too far from 1. This is a simpler and more robust alternative to enforcing a hard KL constraint or penalty, as it directly restricts the update at the level of each sample.
-![PPO](CMU_Notes/DRL/img/PPO.png)
+![PPO](img/PPO.png)
 
 ### Gradient Behaviors Induced by Clipping
 - **Within the Clip Range:** When $r(\theta)$ is within $[1-\epsilon, 1+\epsilon]$, the gradient behaves like the standard policy gradient.
@@ -1087,7 +1087,7 @@ PPO improves stability by ensuring that the policy update does not push $r(\thet
 - **Hurts exploration of action space**: want more flexibility on the positive side, use asymmetric clip $\epsilon_{high}$ and $\epsilon_{low}$, especially in LLM. (DAPO)
 **Summary:**
 PPO’s clipped objective provides a simple, effective way to limit policy updates, improving stability over vanilla policy gradients, but at the cost of some bias and less direct control over the policy divergence.
-![PPO takeaway](CMU_Notes/DRL/img/PPO-takeaway.png)
+![PPO takeaway](img/PPO-takeaway.png)
 
 ---
 
@@ -1162,7 +1162,7 @@ So far, our derivation for the policy objective gradient assigns the blame (or r
 	$G_t= \sum_{k=t}^T R\left(s_k^{(i)}, a_k^{(i)}\right)$
 - Credit assignment problem: rewards at later times are attributed back to earlier actions.
 #### **REINFORCE- Monte Carlo**
-![REINFORCE Algorithm](CMU_Notes/DRL/img/REINFORCE.png)
+![REINFORCE Algorithm](img/REINFORCE.png)
 #### **Variance Reduction**
 - Gradient is unbiased, but needs a very large N.
 - Monte Carlo estimators suffer from **high variance**.
@@ -1174,7 +1174,7 @@ So far, our derivation for the policy objective gradient assigns the blame (or r
     - Time-dependent baseline $b_t = \sum_{i=1}^N G_t^{(i)}$
     - State-dependent baseline $b(s)$
      $b(s) = \mathbb{E}[r_t + r_{t+1} + r_{t+2} + \dots + r_{T-1} | s_t = s] = V_{\pi}(s)$
-- **Optimal baseline** (to minimize variance): the **state-value function** $V^\pi(s)$.![REINFORCE Baseline](CMU_Notes/DRL/img/REINFORCE_baseline.png)
+- **Optimal baseline** (to minimize variance): the **state-value function** $V^\pi(s)$.![REINFORCE Baseline](img/REINFORCE_baseline.png)
 
 ---
 
@@ -1215,7 +1215,7 @@ So far, our derivation for the policy objective gradient assigns the blame (or r
 
 # TD3
 
-![TD3](CMU_Notes/DRL/img/TD3.png)
+![TD3](img/TD3.png)
 ###  1. What is TD3?
 TD3 = **Twin Delayed Deep Deterministic Policy Gradient**
 - An **off-policy, actor–critic algorithm** for **continuous action spaces**.
