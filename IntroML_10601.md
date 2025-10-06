@@ -428,8 +428,8 @@
     - Approximate differentiation by measuring the difference for the function with small changes
 - Chain Rule:
   =![chain rule](chain_rule.png)
-  <img src="introML_img/chain_rule.png"  width="200"/>
-  <img src="introML_img/vector_deriv.png"  width="200"/>
+  <!-- <img src="introML_img/chain_rule.png"  width="200"/>
+  <img src="introML_img/vector_deriv.png"  width="200"/> -->
   ![vector derivatives](vector_deriv.png) 
 - Derivative for sigmoid:
   - $s = \frac{1}{1+exp(-b)}$
@@ -553,21 +553,21 @@ return alpha, beta
   - condition on the last n-1 words to sample the nth word
   - $\Pi_{t=1}^{T} p(w_t|w_{t-1})$
   - count n-gram frequencies to get the probabilities
-<!-- ![RNN_LM](introML_img/RNN_LM.png) -->
-- <img src="introML_img/RNN_LM.png"  width="400"/>
+![RNN_LM](introML_img/RNN_LM.png)
+<!-- - <img src="introML_img/RNN_LM.png"  width="400"/> -->
   
   - Key ideas
     - convert all previous words to fixed length vector
     - definr distribution $p(w_t|f_{\theta}(w_{t-1}, ..., w_1))$ conditioning on vector $h_t=f_{\theta}(w_{t-1}, ..., w_1)$
   - Learning RNN
     - part of speech tagging
-<!-- - ![RNN_LM_algo](introML_img/Elman_RNN.png) -->
-- <img src="introML_img/Elman_RNN.png"  width="400"/> <img src="introML_img/RNN_LM_loss.png"  width="400"/> <img src="introML_img/attention.png"  width="400"/>
+- ![RNN_LM_algo](introML_img/Elman_RNN.png)
+<!-- - <img src="introML_img/Elman_RNN.png"  width="400"/> <img src="introML_img/RNN_LM_loss.png"  width="400"/> <img src="introML_img/attention.png"  width="400"/> -->
 
-<!-- - ![RNN_LM_loss](introML_img/RNN_LM_loss.png) -->
+- ![RNN_LM_loss](introML_img/RNN_LM_loss.png)
 
 <!-- - Attention -->
-<!-- - ![Attention](introML_img/attention.png) -->
+- ![Attention](introML_img/attention.png)
 
   - multiheaded attention: like multiple channels in convolution layer 
   - It allows a model to simultaneously focus on different aspects of an input sequence
@@ -576,8 +576,8 @@ return alpha, beta
   - RNN computation graph grows linearly with number of input tokens; Transformer grows quadratically
   - Each layer consists of attention, feed-forward nn, layer normalization, residual connecton
   - layer normalization: 
-<!-- - ![layer normalization](introML_img/tf_norm.png) -->
-<img src="introML_img/tf_norm.png"  width="400"/>
+- ![layer normalization](introML_img/tf_norm.png)
+<!-- <img src="introML_img/tf_norm.png"  width="400"/> -->
 
 ### AudoDiff
 
@@ -591,24 +591,23 @@ return alpha, beta
 - RLHF
 ### Reinforcement Learning
 - Formulation: state space, action space, reward function (stochastic, deterministic), transition function, policy($\pi$ specifies an action to take in every state), value function($V^{\pi}: S\rightarrow R$ expected total payoff of starting in state s executing policy $\pi$)
-<!-- ![RL terminology](introML_img/RL_term.png) -->
-<img src="introML_img/RL_term.png"  width="400"/>
-- MDP
-  - objective function: total reward $E[\sum_{t=0}^{\infin}\gamma^t r_t]$: infinite horizon expected future discounted reward
+![RL terminology](introML_img/RL_term.png)
+<!-- <img src="introML_img/RL_term.png"  width="400"/> -->
+- [MDP](https://gibberblot.github.io/rl-notes/single-agent/MDPs.html)
+  - objective function: total reward $E[\sum_{t=0}^{\inf}\gamma^t r_t]$: infinite horizon expected future discounted reward
 - Bellman's Equation
 - Fixed Point Iteration
   - system of equations; rewrite with each variable on the LHS; update each parameter until converge
 
 - Value iterations 
-<!-- ![RL value](introML_img/RL_value_iter.png)
+![RL value](introML_img/RL_value_iter.png)
 ![RL value iter variant3](introML_img/RL_val_iter2.png)
 ![RL value iter variant1](introML_img/RL_val_v1.png)
 ![RL value iter variant2](introML_img/RL_val_v2.png)
 ![RL value iteration sync and async](introML_img/RL_sync_async.png)
 ![RL value iteration sync and async](introML_img/RL_conv.png)
- -->
 
-<img src="introML_img/RL_value_iter.png"  width="400"/><img src="introML_img/RL_val_iter2.png"  width="400"/><img src="introML_img/RL_val_v1.png"  width="400"/><img src="introML_img/RL_val_v2.png"  width="400"/><img src="introML_img/RL_sync_async.png"  width="400"/><img src="introML_img/RL_conv.png"  width="400"/>
+
 
 - Policy Iterations
   - stochastic rewards: deterministic rewrds depending on the next state (transitions are stochastic)

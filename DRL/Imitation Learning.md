@@ -1,0 +1,3 @@
+**Problem:** behavior cloning trains on expert trajectories $s\sim P_{\pi^*}$​. At test time the learned policy  visits a _different_ distribution $s\sim P_{\pî}$. Small errors compound → the policy drifts into states not seen in training and fails
+
+**Intuition of DAgger:** collect labels _on the states the learner actually visits_, so the training data reflects $P_{\pî}$. By continuously aggregating these corrective labels, the learner learns how to recover from its own mistakes instead of only mimicking expert trajectories. This converts the imitation problem into an online learning (no-regret) reduction with provable performance bounds.
